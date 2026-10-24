@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#042f2e" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <!-- Background Rounded Shield / App Icon -->
+  <rect width="512" height="512" rx="112" fill="url(#docGrad)" />
+  
+  <!-- Subtle inner border -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="none" stroke="#2dd4bf" stroke-width="4" stroke-opacity="0.3" />
+
+  <!-- Medical Cross with Pulse Beat -->
+  <g filter="url(#shadow)">
+    <!-- Vertical Bar -->
+    <rect x="220" y="110" width="72" height="292" rx="20" fill="#ffffff" />
+    <!-- Horizontal Bar -->
+    <rect x="110" y="220" width="292" height="72" rx="20" fill="#ffffff" />
+  </g>
+
+  <!-- Dynamic Heartbeat ECG Line across cross -->
+  <path d="M 120 256 L 190 256 L 215 170 L 250 340 L 285 220 L 315 275 L 340 256 L 392 256" 
+        fill="none" 
+        stroke="#0d9488" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+
+  <!-- Little Emerald Live Pulse Dot -->
+  <circle cx="392" cy="256" r="10" fill="#2dd4bf" />
+</svg>

@@ -1,0 +1,235 @@
+{
+  "updatedAt": "2026-10-24T01:57:03.274Z",
+  "mode": "real",
+  "chambers": [
+    {
+      "chamberId": "ch-a54321",
+      "docId": "doc-1792803829922",
+      "bmdcRegNo": "A-54321",
+      "isDemo": false,
+      "docName": "ডা. তানভীর আহমেদ",
+      "degree": "MBBS, FCPS (Medicine)",
+      "specialty": "মেডিসিন ও হৃদরোগ বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ২০৫, ২য় তলা",
+      "currentInsideSerial": 1,
+      "avgMinutesPerPatient": 10,
+      "fee": 1000,
+      "followupFee": 600,
+      "schedules": [
+        {
+          "day": "আজ",
+          "time": "সন্ধ্যা ৬:০০ - রাত ৯:০০"
+        }
+      ],
+      "queue": [
+        {
+          "serial": 1,
+          "name": "শামীম রেজা",
+          "phone": "01711998877",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "inside",
+          "bookedAt": "2026-10-24T01:03:49.930Z",
+          "paymentMethod": "BKASH",
+          "paymentTrxId": "BK98765432",
+          "paymentVerifiedAt": "2026-10-24T01:03:49.939Z",
+          "paymentReceivedBy": "কাউন্টার ক্যাশিয়ার ১",
+          "consultationStartedAt": "2026-10-24T01:03:49.943Z",
+          "vitals": {
+            "bp": "125/80",
+            "pulse": 74,
+            "spo2": 99,
+            "temp": 98.6,
+            "weight": 68
+          },
+          "clinicalNotes": "মৃদু বুকে চাপ ও শারীরিক দুর্বলতা",
+          "vitalsRecordedAt": "2026-10-24T01:03:49.946Z"
+        },
+        {
+          "serial": 2,
+          "name": "সালমা বেগম",
+          "phone": "01822887766",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": false,
+          "status": "waiting",
+          "bookedAt": "2026-10-24T01:03:49.934Z"
+        }
+      ]
+    }
+  ],
+  "prescriptions": {
+    "01711998877": [
+      {
+        "id": "rx-1792803829950",
+        "serial": 1,
+        "patientName": "শামীম রেজা",
+        "patientPhone": "01711998877",
+        "docName": "ডা. তানভীর আহমেদ",
+        "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+        "chamberRoom": "কক্ষ ২০৫, ২য় তলা",
+        "date": "২৪ অক্টোবর, ২০২৬",
+        "diagnosis": "Mild Hypertension & General Fatigue",
+        "medications": [
+          "Tab. Bizoran 5/20 mg — ১ + ০ + ০ (সকালে খাওয়ার পর) • ৩০ দিন",
+          "Cap. Seclo 20 mg — ১ + ০ + ১ (খাওয়ার ৩০ মিনিট পূর্বে) • ৩০ দিন"
+        ],
+        "tests": "ECG, Lipid Profile",
+        "followupDate": "২০২৬-১১-০১",
+        "issuedAt": "2026-10-24T01:03:49.950Z"
+      }
+    ],
+    "শামীম রেজা": [
+      {
+        "id": "rx-1792803829950",
+        "serial": 1,
+        "patientName": "শামীম রেজা",
+        "patientPhone": "01711998877",
+        "docName": "ডা. তানভীর আহমেদ",
+        "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+        "chamberRoom": "কক্ষ ২০৫, ২য় তলা",
+        "date": "২৪ অক্টোবর, ২০২৬",
+        "diagnosis": "Mild Hypertension & General Fatigue",
+        "medications": [
+          "Tab. Bizoran 5/20 mg — ১ + ০ + ০ (সকালে খাওয়ার পর) • ৩০ দিন",
+          "Cap. Seclo 20 mg — ১ + ০ + ১ (খাওয়ার ৩০ মিনিট পূর্বে) • ৩০ দিন"
+        ],
+        "tests": "ECG, Lipid Profile",
+        "followupDate": "২০২৬-১১-০১",
+        "issuedAt": "2026-10-24T01:03:49.950Z"
+      }
+    ]
+  },
+  "auditLogs": [
+    {
+      "id": "log-1792807022492-2kla",
+      "timestamp": "2026-10-24T01:57:02.492Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806528790-ddco",
+      "timestamp": "2026-10-24T01:48:48.790Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806512902-h71g",
+      "timestamp": "2026-10-24T01:48:32.902Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806507837-0wqj",
+      "timestamp": "2026-10-24T01:48:27.837Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806504705-9rh5",
+      "timestamp": "2026-10-24T01:48:24.705Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803943161-4t0t",
+      "timestamp": "2026-10-24T01:05:43.161Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829950-gmpi",
+      "timestamp": "2026-10-24T01:03:49.950Z",
+      "action": "ISSUE_PRESCRIPTION",
+      "chamberId": "ch-a54321",
+      "userRole": "DOCTOR",
+      "details": "Prescription #rx-1792803829950 issued for শামীম রেজা (01711998877). Diagnosis: Mild Hypertension & General Fatigue",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829946-f35v",
+      "timestamp": "2026-10-24T01:03:49.946Z",
+      "action": "UPDATE_VITALS",
+      "chamberId": "ch-a54321",
+      "userRole": "DOCTOR",
+      "details": "Recorded clinical vitals for Serial #1 (শামীম রেজা): BP 125/80, Pulse 74, SpO2 99%",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829943-6wiv",
+      "timestamp": "2026-10-24T01:03:49.943Z",
+      "action": "CALL_NEXT",
+      "chamberId": "ch-a54321",
+      "userRole": "COMPOUNDER",
+      "details": "Called Serial #1 (শামীম রেজা) into কক্ষ ২০৫, ২য় তলা",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829939-alo7",
+      "timestamp": "2026-10-24T01:03:49.939Z",
+      "action": "RECORD_PAYMENT",
+      "chamberId": "ch-a54321",
+      "userRole": "COMPOUNDER",
+      "details": "Payment of ৳1000 verified for Serial #1 (শামীম রেজা) via BKASH [TrxID: BK98765432]",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829934-ru57",
+      "timestamp": "2026-10-24T01:03:49.934Z",
+      "action": "BOOK_SERIAL",
+      "chamberId": "ch-a54321",
+      "userRole": "WALKIN",
+      "details": "Booked Serial #2 for সালমা বেগম (01822887766) via walkin",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829930-ctqy",
+      "timestamp": "2026-10-24T01:03:49.930Z",
+      "action": "BOOK_SERIAL",
+      "chamberId": "ch-a54321",
+      "userRole": "ONLINE",
+      "details": "Booked Serial #1 for শামীম রেজা (01711998877) via online",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829922-ve08",
+      "timestamp": "2026-10-24T01:03:49.922Z",
+      "action": "ADD_DOCTOR_CHAMBER",
+      "chamberId": "ch-a54321",
+      "userRole": "ADMIN",
+      "details": "Registered Dr. ডা. তানভীর আহমেদ (BMDC: A-54321) at কক্ষ ২০৫, ২য় তলা",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829911-d66m",
+      "timestamp": "2026-10-24T01:03:49.911Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to REAL mode.",
+      "performedBy": "User"
+    }
+  ]
+}

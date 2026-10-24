@@ -1,0 +1,289 @@
+{
+  "updatedAt": "2026-10-24T01:57:02.490Z",
+  "mode": "demo",
+  "chambers": [
+    {
+      "chamberId": "ch-pop-302",
+      "docId": "doc-demo-1",
+      "bmdcRegNo": "BMDC-A-28491 (DEMO)",
+      "isDemo": true,
+      "docName": "অধ্যাপক ডা. মো. রফিকুল ইসলাম [ডেমো]",
+      "degree": "MBBS, FCPS (Cardiology), MD",
+      "specialty": "হৃদরোগ ও মেডিসিন বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ৩০২, ২য় তলা",
+      "currentInsideSerial": 5,
+      "avgMinutesPerPatient": 10,
+      "fee": 1000,
+      "followupFee": 600,
+      "queue": [
+        {
+          "serial": 1,
+          "name": "আব্দুল খালেক [কাল্পনিক]",
+          "phone": "01711-100001",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 2,
+          "name": "রাবেয়া খাতুন [কাল্পনিক]",
+          "phone": "01822-100002",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 3,
+          "name": "মো. জসিম উদ্দিন [কাল্পনিক]",
+          "phone": "01933-100003",
+          "source": "phone",
+          "checkin": true,
+          "fee": 600,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 4,
+          "name": "ফারহানা আফরোজ [কাল্পনিক]",
+          "phone": "01744-100004",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 5,
+          "name": "সুফিয়া বেগম [কাল্পনিক]",
+          "phone": "01555-100005",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "inside",
+          "vitals": {
+            "bp": "130/85",
+            "pulse": 76,
+            "spo2": 98,
+            "temp": 98.4,
+            "weight": 64
+          }
+        },
+        {
+          "serial": 6,
+          "name": "মাহমুদুল হাসান [কাল্পনিক]",
+          "phone": "01766-100006",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 7,
+          "name": "আনোয়ারুল ইসলাম [কাল্পনিক]",
+          "phone": "01877-100007",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 8,
+          "name": "নাজমুল হুদা [কাল্পনিক]",
+          "phone": "01988-100008",
+          "source": "phone",
+          "checkin": false,
+          "fee": 600,
+          "paid": false,
+          "status": "waiting"
+        },
+        {
+          "serial": 9,
+          "name": "তাহমিনা আক্তার [কাল্পনিক]",
+          "phone": "01799-100009",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 10,
+          "name": "কামাল উদ্দিন [কাল্পনিক]",
+          "phone": "01811-100010",
+          "source": "walkin",
+          "checkin": false,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-pop-201",
+      "docId": "doc-demo-2",
+      "bmdcRegNo": "BMDC-A-39102 (DEMO)",
+      "isDemo": true,
+      "docName": "ডা. নুসরাত জাহান চৌধুরী [ডেমো]",
+      "degree": "MBBS, DGO, FCPS (Gynae & Obs)",
+      "specialty": "স্ত্রী ও প্রসূতি বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ২০১, ১ম তলা",
+      "currentInsideSerial": 12,
+      "avgMinutesPerPatient": 12,
+      "fee": 800,
+      "followupFee": 500,
+      "queue": [
+        {
+          "serial": 11,
+          "name": "নাজমা বেগম [কাল্পনিক]",
+          "phone": "01712-300001",
+          "source": "online",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 12,
+          "name": "রীতা আক্তার [কাল্পনিক]",
+          "phone": "01819-300002",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "inside",
+          "vitals": {
+            "bp": "115/75",
+            "pulse": 80,
+            "spo2": 99,
+            "temp": 98.6,
+            "weight": 58
+          }
+        },
+        {
+          "serial": 13,
+          "name": "মমতাজ বেগম [কাল্পনিক]",
+          "phone": "01911-300003",
+          "source": "online",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "waiting"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-pop-108",
+      "docId": "doc-demo-3",
+      "bmdcRegNo": "BMDC-A-41820 (DEMO)",
+      "isDemo": true,
+      "docName": "ডা. সাজ্জাদ হোসেন [ডেমো]",
+      "degree": "MBBS, MD (Pediatrics)",
+      "specialty": "নবজাতক ও শিশুরোগ বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ১০৮, নিচতলা",
+      "currentInsideSerial": null,
+      "avgMinutesPerPatient": 8,
+      "fee": 1000,
+      "followupFee": 700,
+      "queue": [
+        {
+          "serial": 1,
+          "name": "ছোট্ট আরিয়ান [কাল্পনিক]",
+          "phone": "01711-234567",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        }
+      ]
+    }
+  ],
+  "prescriptions": {
+    "01555-100005": [
+      {
+        "id": "rx-demo-1",
+        "serial": 5,
+        "patientName": "সুফিয়া বেগম [কাল্পনিক]",
+        "patientPhone": "01555-100005",
+        "docName": "অধ্যাপক ডা. মো. রফিকুল ইসলাম [ডেমো]",
+        "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+        "chamberRoom": "কক্ষ ৩০২, ২য় তলা",
+        "diagnosis": "Essential Hypertension & Mild Angina (Demo Record)",
+        "date": "২৩ অক্টোবর, ২০২৬",
+        "medications": [
+          "Tab. Bizoran 5/20 mg — ১ + ০ + ০ (সকালে খাওয়ার পর) • ৩০ দিন",
+          "Cap. Seclo 20 mg — ১ + ০ + ১ (খাওয়ার ৩০ মিনিট পূর্বে) • ৩০ দিন",
+          "Tab. Napa Extra 500/65 mg — ব্যথা হলে ১টি ভরা পেটে"
+        ],
+        "tests": "ECG (12-Lead), Serum Creatinine, Echocardiography",
+        "followupDate": "২০২৬-১০-৩০"
+      }
+    ]
+  },
+  "auditLogs": [
+    {
+      "id": "log-1792807020876-kf91",
+      "timestamp": "2026-10-24T01:57:00.876Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to DEMO mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806521925-6t6o",
+      "timestamp": "2026-10-24T01:48:41.925Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to DEMO mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806510782-7ewn",
+      "timestamp": "2026-10-24T01:48:30.782Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to DEMO mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792806506806-6hme",
+      "timestamp": "2026-10-24T01:48:26.806Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to DEMO mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829962-2ko2",
+      "timestamp": "2026-10-24T01:03:49.962Z",
+      "action": "MODE_SWITCH",
+      "chamberId": "SYSTEM",
+      "userRole": "ADMIN",
+      "details": "System switched to DEMO mode.",
+      "performedBy": "User"
+    },
+    {
+      "id": "log-1792803829962-e2k3",
+      "timestamp": "2026-10-24T01:03:49.962Z",
+      "action": "INIT_DEMO",
+      "chamberId": "SYSTEM",
+      "userRole": "SYSTEM",
+      "details": "Initialized demo dataset with 3 chambers and fictional records.",
+      "performedBy": "User"
+    }
+  ]
+}

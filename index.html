@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocBD — রিয়েল-টাইম চেম্বার সিরিয়াল ও ওপিডি প্ল্যাটফর্ম</title>
+  <meta name="description" content="DocBD: বাংলাদেশের হাসপাতাল ও ক্লিনিকাল চেম্বারের জন্য রিয়েল-টাইম লাইভ সিরিয়াল ও ওপিডি ম্যানেজমেন্ট সিস্টেম">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+</head>
+<body>
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="logo-group">
+      <div class="brand-logo">
+        <span class="logo-cross">+</span>
+        <span class="logo-text">Doc<span class="text-accent">BD</span></span>
+      </div>
+      <span class="badge-tag">ওপিডি প্ল্যাটফর্ম v১.০</span>
+    </div>
+
+    <!-- Mode Switcher Tabs -->
+    <div class="view-switcher" role="tablist">
+      <button id="tab-patient" class="switch-btn active" onclick="switchView('patient')">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        রোগীর অ্যাপ
+      </button>
+      <button id="tab-compounder" class="switch-btn" onclick="switchView('compounder')">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M9 10h6"/></svg>
+        সিরিয়াল খাতা
+      </button>
+      <button id="tab-doctor" class="switch-btn" onclick="switchView('doctor')">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+        ডাক্তার পোর্টাল
+      </button>
+      <button id="tab-hospital" class="switch-btn" onclick="switchView('hospital')">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+        হাসপাতাল ড্যাশবোর্ড
+      </button>
+      <button id="tab-dual" class="switch-btn" onclick="switchView('dual')">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/></svg>
+        ডুয়াল ভিউ
+      </button>
+      <button id="tab-tv" class="switch-btn" onclick="switchView('tv')">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="15" x="2" y="3" rx="2"/><polyline points="17 21 12 18 7 21"/></svg>
+        ওয়েটিং টিভি
+      </button>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="nav-right">
+      <div class="mode-badge-wrap">
+        <span id="system-mode-badge" class="mode-badge mode-demo">
+          <span class="mode-dot"></span>
+          <span id="system-mode-text">ডেমো মোড (কাল্পনিক ডেটা)</span>
+        </span>
+        <button id="btn-mode-toggle" class="btn-mode-toggle" onclick="window.DocBD.toggleSystemMode()">
+          মোড পরিবর্তন
+        </button>
+      </div>
+      <button id="btn-emergency" class="btn-emergency-top" onclick="window.DocBD.openEmergencyModal()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        জরুরি সেবা (৯৯৯ / ১৬২৬৩)
+      </button>
+      <button id="lang-toggle-btn" class="btn-lang-toggle" onclick="window.DocBD.toggleLanguage()">
+        English
+      </button>
+      <button id="easy-mode-toggle" class="btn-easy-toggle" onclick="window.DocBD.toggleEasyMode()">
+        সহজ মোড
+      </button>
+      <div class="live-indicator status-online">
+        <span class="pulse-dot connected"></span> ক্লাউড সিঙ্ক সক্রিয়
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Main Multi-App Container -->
+  <main class="app-workspace" id="app-workspace">
+
+    <!-- ================= VIEW 1: PATIENT MOBILE APP ================= -->
+    <section id="patient-view" class="device-frame-wrapper view-active">
+      <div class="phone-frame">
+        <!-- Phone Speaker & Camera Notch -->
+        <div class="phone-notch">
+          <div class="speaker"></div>
+          <div class="camera"></div>
+        </div>
+
+        <!-- Patient App Screen -->
+        <div class="phone-screen" id="patient-screen">
+          <!-- Patient App Top Header -->
+          <div class="patient-header">
+            <div class="patient-location">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <div>
+                <small>আপনার এলাকা</small>
+                <strong>ধানমন্ডি, ঢাকা</strong>
+              </div>
+            </div>
+            <div class="patient-profile-chip" onclick="window.DocBD.openFamilyModal()">
+              <span class="avatar-circle">👤</span>
+              <span id="active-profile-name">আমার প্রোফাইল</span>
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <!-- Clean Search Bar -->
+          <div class="search-hero">
+            <div class="search-input-box">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="patient-search-input" placeholder="ডাক্তার, স্পেশালিটি বা ক্লিনিক খুঁজুন..." oninput="handleSearch(this.value)">
+              <button class="btn-voice-search" onclick="simulateVoiceSearch()" title="ভয়েস ইনপুট">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+              </button>
+            </div>
+            <div class="quick-filters">
+              <button class="filter-pill active" onclick="applyFilter('all')">সব ডাক্তার</button>
+              <button class="filter-pill" onclick="applyFilter('cardiology')">কার্ডিওলজি</button>
+              <button class="filter-pill" onclick="applyFilter('gynae')">স্ত্রী ও প্রসূতি</button>
+              <button class="filter-pill" onclick="applyFilter('pediatrics')">শিশুরোগ</button>
+              <button class="filter-pill" onclick="applyFilter('today')">আজকের চেম্বার</button>
+              <button class="filter-pill" onclick="applyFilter('lowfee')">ফি ৳৮০০ এর নিচে</button>
+            </div>
+          </div>
+
+          <!-- Active Live Queue Card -->
+          <div class="live-ticket-card" id="patient-live-ticket">
+            <div class="ticket-header">
+              <div class="ticket-status-badge">
+                <span class="blink-dot"></span> চেম্বার চলমান
+              </div>
+              <span class="chamber-name">পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি</span>
+            </div>
+            
+            <div class="ticket-doc-info">
+              <div>
+                <h4 id="ticket-doc-name">অধ্যাপক ডা. মো. রফিকুল ইসলাম</h4>
+                <p id="ticket-doc-spec">হৃদরোগ ও মেডিসিন বিশেষজ্ঞ (BMDC Reg: A-28491)</p>
+              </div>
+            </div>
+
+            <div class="queue-monitor-box">
+              <div class="queue-col now-in">
+                <span class="q-label">বর্তমানে ভেতরে</span>
+                <span class="q-val" id="patient-current-inside">৫</span>
+                <small>সিরিয়াল নম্বর</small>
+              </div>
+              <div class="queue-divider">➔</div>
+              <div class="queue-col my-token">
+                <span class="q-label">আপনার সিরিয়াল</span>
+                <span class="q-val text-accent" id="patient-my-serial">—</span>
+                <small>বুকিং টোকেন</small>
+              </div>
+              <div class="queue-divider">➔</div>
+              <div class="queue-col est-time">
+                <span class="q-label">সম্ভাব্য সময়</span>
+                <span class="q-val text-time" id="patient-est-time">বুকিং প্রয়োজন</span>
+                <small id="patient-time-status">সিরিয়াল নিতে নিচের বাটনে চাপ দিন</small>
+              </div>
+            </div>
+
+            <!-- Proximity Check-in Prompt -->
+            <div class="proximity-alert" id="proximity-checkin-box">
+              <div class="prox-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="prox-text">
+                <strong>আপনি পপুলার ডায়াগনস্টিক সেন্টারের ২০০ মিটারের মধ্যে আছেন</strong>
+                <p>উপস্থিতি নিশ্চিত করতে রিসেপশনকে জানান</p>
+              </div>
+              <button id="btn-self-checkin" class="btn-checkin" onclick="confirmPatientCheckin()">
+                ✓ আমি পৌঁছেছি
+              </button>
+            </div>
+            <div id="checkin-success-msg" class="checkin-confirmed hidden">
+              ✓ আপনার উপস্থিতি রিসেপশনে নিশ্চিত করা হয়েছে
+            </div>
+          </div>
+
+          <!-- Doctors Directory List -->
+          <div class="section-title">
+            <h3>উপলব্ধ বিশেষজ্ঞ চিকিৎসক ও চেম্বার</h3>
+            <span class="result-count" id="doctor-count">৪ জন আজ চেম্বারে</span>
+          </div>
+
+          <div class="doctor-list" id="doctor-list-container">
+            <!-- Doctor Cards Injected by JS -->
+          </div>
+
+          <!-- Bottom Navigation Bar for Patient -->
+          <nav class="patient-bottom-nav">
+            <button class="nav-item active" onclick="navPatient('home')">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <span>হোম</span>
+            </button>
+            <button class="nav-item" onclick="navPatient('bookings')">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>বুকিং</span>
+            </button>
+            <button class="nav-item" onclick="navPatient('vault')">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>প্রেসক্রিপশন</span>
+            </button>
+            <button class="nav-item" onclick="navPatient('care')">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              <span>কেয়ার টিম</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: COMPOUNDER REGISTER ================= -->
+    <section id="compounder-view" class="device-frame-wrapper">
+      <div class="compounder-desk-frame">
+        <div class="comp-desk-header">
+          <div>
+            <h2>কক্ষ ৩০২ — চেম্বার সিরিয়াল রেজিস্টার</h2>
+            <p>অধ্যাপক ডা. মো. রফিকুল ইসলাম (হৃদরোগ বিশেষজ্ঞ) • পপুলার ডায়াগনস্টিক, ধানমন্ডি</p>
+          </div>
+          <div class="comp-header-actions">
+            <button class="btn-comp-action btn-primary" onclick="openWalkinModal()">
+              + ওয়াক-ইন / ফোন বুকিং
+            </button>
+            <button class="btn-comp-action btn-danger-soft" onclick="broadcastDoctorDelay()">
+              বিলম্বের SMS ব্রডকাস্ট (৩০ মিনিট)
+            </button>
+          </div>
+        </div>
+
+        <!-- Next Call Hint & Inside Focus -->
+        <div class="comp-focus-banner">
+          <div class="current-inside-box">
+            <span class="focus-label">বর্তমানে পরামর্শ নিচ্ছেন:</span>
+            <strong class="focus-patient-name" id="comp-inside-patient">সিরিয়াল ৫: সুফিয়া বেগম</strong>
+          </div>
+          <div class="comp-primary-actions">
+            <button class="btn-call-next" onclick="callNextPatient()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              পরবর্তী রোগী ডাকুন
+            </button>
+            <button class="btn-comp-sub" onclick="completeCurrentVisit()">
+              ✓ ভিজিট সম্পন্ন
+            </button>
+            <button class="btn-comp-sub" onclick="holdPatient()">
+              ⏸️ টেস্টের জন্য হোল্ড
+            </button>
+            <button class="btn-comp-sub text-danger" onclick="markNoShow()">
+              ✕ অনুপস্থিত
+            </button>
+          </div>
+          <div class="next-caller-badge" id="next-caller-hint">সিরিয়াল ৬ প্রস্তুত করুন</div>
+        </div>
+
+        <!-- Real-time Stats Cards -->
+        <div class="comp-stats-grid">
+          <div class="stat-card">
+            <span class="stat-num" id="stat-total">১৫</span>
+            <span class="stat-lbl">মোট সিরিয়াল</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num text-green" id="stat-done">৪</span>
+            <span class="stat-lbl">ভিজিট সম্পন্ন</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num text-accent" id="stat-waiting">১০</span>
+            <span class="stat-lbl">অপেক্ষমাণ রোগী</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num text-blue" id="stat-checkedin">৯</span>
+            <span class="stat-lbl">ক্লিনিকে উপস্থিত</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-num text-muted" id="stat-noshow">০</span>
+            <span class="stat-lbl">অনুপস্থিত (No Show)</span>
+          </div>
+        </div>
+
+        <!-- Master Queue Table -->
+        <div class="serial-table-wrapper">
+          <table class="serial-table">
+            <thead>
+              <tr>
+                <th>সিরিয়াল</th>
+                <th>রোগীর নাম ও মোবাইল</th>
+                <th>মাধ্যম</th>
+                <th>উপস্থিতি</th>
+                <th>ভিজিট ফি ও পেমেন্ট</th>
+                <th>স্ট্যাটাস</th>
+                <th>অ্যাকশন</th>
+              </tr>
+            </thead>
+            <tbody id="comp-serial-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2.5: DOCTOR PORTAL & EMR ================= -->
+    <section id="doctor-view" class="device-frame-wrapper">
+      <div class="doctor-portal-frame">
+        <div class="doc-portal-header">
+          <div>
+            <h2>ডাক্তার কনসালটেশন ও ই-প্রেসক্রিপশন পোর্টাল</h2>
+            <p>অধ্যাপক ডা. মো. রফিকুল ইসলাম • কক্ষ ৩০২ (পপুলার ধানমন্ডি) • BMDC Reg: A-28491</p>
+          </div>
+          <div class="doc-portal-actions">
+            <span class="live-status-pill">● কনসালটেশন চলমান</span>
+            <button class="btn-comp-action btn-primary" onclick="startVideoCall()">
+              ভিডিও কল পরামর্শ
+            </button>
+          </div>
+        </div>
+
+        <div class="doc-consult-grid">
+          <!-- Left Col: Patient Vitals & History -->
+          <div class="patient-vitals-pane">
+            <div class="pane-header">
+              <h4>বর্তমানে চেম্বারে উপস্থিত রোগী:</h4>
+              <strong id="doc-patient-name" class="active-patient-badge">সুফিয়া বেগম (সিরিয়াল #৫)</strong>
+            </div>
+
+            <!-- Vitals Grid -->
+            <div class="vitals-grid">
+              <div class="vital-item">
+                <span class="v-label">ব্লাড প্রেসার</span>
+                <span class="v-val text-red">১৩৫/৮৫</span>
+                <small>mmHg</small>
+              </div>
+              <div class="vital-item">
+                <span class="v-label">পালস রেট</span>
+                <span class="v-val text-green">৭৮</span>
+                <small>bpm</small>
+              </div>
+              <div class="vital-item">
+                <span class="v-label">SpO2 লেভেল</span>
+                <span class="v-val text-blue">৯৮%</span>
+                <small>স্বাভাবিক</small>
+              </div>
+              <div class="vital-item">
+                <span class="v-label">র‍্যান্ডম সুগার</span>
+                <span class="v-val">৭.২</span>
+                <small>mmol/L</small>
+              </div>
+            </div>
+
+            <!-- Clinical Complaints -->
+            <div class="complaints-box">
+              <label>প্রধান সমস্যা ও ক্লিনিকাল হিস্ট্রি:</label>
+              <div class="complaint-chips">
+                <span class="chip">বুক ধড়ফড় (৩ দিন)</span>
+                <span class="chip">সিঁড়ি বেয়ে ওঠার সময় শ্বাসকষ্ট</span>
+                <span class="chip">পূর্ববর্তী ডায়াবেটিস ও হাইপারটেনশন</span>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top:14px;">
+              <label>ক্লিনিকাল ডায়াগনসিস (Diagnosis)</label>
+              <input type="text" id="rx-diagnosis" value="Essential Hypertension & Mild Angina Pectoris">
+            </div>
+          </div>
+
+          <!-- Right Col: Digital Prescription Builder -->
+          <div class="prescription-builder-pane">
+            <div class="pane-header">
+              <h4>ডিজিটাল প্রেসক্রিপশন প্রস্তুতি (Quick-Rx)</h4>
+              <span class="rx-symbol">℞</span>
+            </div>
+
+            <div class="rx-entry-controls">
+              <div class="form-group">
+                <label>ঔষধ নির্বাচন ও ডোজ নির্ধারণ</label>
+                <div class="drug-select-row">
+                  <select id="rx-med-select" class="rx-select-lg">
+                    <option value="Tab. Bizoran 5/20 mg">Tab. Bizoran 5/20 mg (Amlodipine + Olmesartan)</option>
+                    <option value="Cap. Seclo 20 mg">Cap. Seclo 20 mg (Omeprazole)</option>
+                    <option value="Tab. Napa Extra 500/65 mg">Tab. Napa Extra (Paracetamol + Caffeine)</option>
+                    <option value="Tab. Rosuva 10 mg">Tab. Rosuva 10 mg (Rosuvastatin)</option>
+                    <option value="Tab. Anxit 0.5 mg">Tab. Anxit 0.5 mg (Alprazolam)</option>
+                  </select>
+                  <div class="dose-row">
+                    <select id="rx-dose-select" class="rx-select-sm">
+                      <option value="১ + ০ + ০">১ + ০ + ০</option>
+                      <option value="১ + ০ + ১">১ + ০ + ১</option>
+                      <option value="০ + ০ + ১">০ + ০ + ১</option>
+                      <option value="১ + ১ + ১">১ + ১ + ১</option>
+                      <option value="প্রয়োজনে ১টি">প্রয়োজনে ১টি</option>
+                    </select>
+                    <select id="rx-timing-select" class="rx-select-sm">
+                      <option value="খাওয়ার পর">খাওয়ার পর</option>
+                      <option value="খাওয়ার ৩০ মি. আগে">খাওয়ার ৩০ মি. আগে</option>
+                    </select>
+                    <button class="btn-add-rx-med" onclick="addMedicineToPrescription()">+ যোগ করুন</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prescribed Medicines List -->
+              <div class="prescribed-meds-box">
+                <label style="font-size:0.8rem; font-weight:600; color:#475569;">প্রেসক্রিপশনে অন্তর্ভুক্ত ওষুধসমূহ:</label>
+                <ul id="prescribed-med-list" class="prescribed-med-list">
+                  <li class="rx-med-item">
+                    <div class="rx-med-info">
+                      <strong>Tab. Bizoran 5/20 mg</strong>
+                      <span>১+০+০ (সকালে খাওয়ার পর) • ৩০ দিন</span>
+                    </div>
+                    <button class="btn-del-rx" onclick="removeMed(this)">✕</button>
+                  </li>
+                  <li class="rx-med-item">
+                    <div class="rx-med-info">
+                      <strong>Cap. Seclo 20 mg</strong>
+                      <span>১+০+১ (খাওয়ার ৩০ মিনিট আগে) • ৩০ দিন</span>
+                    </div>
+                    <button class="btn-del-rx" onclick="removeMed(this)">✕</button>
+                  </li>
+                  <li class="rx-med-item">
+                    <div class="rx-med-info">
+                      <strong>Tab. Napa Extra</strong>
+                      <span>প্রয়োজন হলে ১টি ভরা পেটে</span>
+                    </div>
+                    <button class="btn-del-rx" onclick="removeMed(this)">✕</button>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Diagnostic Tests Advised -->
+              <div class="form-group" style="margin-top:12px;">
+                <label>পরামর্শকৃত টেস্ট ও ইনভেস্টিগেশন</label>
+                <input type="text" id="rx-tests" value="ECG (12-Lead), Serum Creatinine, Echocardiography">
+              </div>
+
+              <!-- Follow-up Recall Setting -->
+              <div class="form-group">
+                <label>পরবর্তী ফলো-আপ তারিখ (স্বয়ংক্রিয় SMS স্মরণবার্তা)</label>
+                <div class="followup-input-group">
+                  <input type="date" id="rx-followup-date" value="2026-10-30">
+                  <small style="color:#0f766e;">(রোগীর মোবাইলে ৭ দিন পূর্বে স্বয়ংক্রিয় SMS রিমাইন্ডার যাবে)</small>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <button class="btn-issue-prescription" onclick="issueDigitalPrescription()">
+                ডিজিটাল প্রেসক্রিপশন ইস্যু করুন ও পেশেন্ট ভল্টে পাঠান
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2.8: HOSPITAL & CLINIC ENTERPRISE DASHBOARD ================= -->
+    <section id="hospital-view" class="device-frame-wrapper">
+      <div class="hospital-dashboard-frame">
+        <div class="hosp-dash-container">
+          <!-- Hospital Header -->
+          <div class="hosp-dash-header">
+            <div>
+              <h2>পপুলার ডায়াগনস্টিক সেন্টার — সেন্ট্রাল ওপিডি কন্ট্রোল ড্যাশবোর্ড</h2>
+              <p>ধানমন্ডি শাখা • DGHS লাইসেন্স: DGHS-DHK-PVT-08241 • এন্টারপ্রাইজ টিয়ার</p>
+            </div>
+            <div class="hosp-header-actions">
+              <button class="btn-comp-action btn-primary" onclick="window.DocBD.openDoctorRegisterModal()">
+                + নতুন ডাক্তার ও চেম্বার নিবন্ধন
+              </button>
+              <button class="btn-comp-action" onclick="window.DocBD.openWidgetModal()">
+                &lt;/&gt; ওয়েবসাইট বুকিং উইজেট কোড
+              </button>
+              <button class="btn-comp-action btn-danger-soft" onclick="window.DocBD.broadcastHospitalAnnouncement()">
+                সাধারণ নোটিশ ব্রডকাস্ট
+              </button>
+            </div>
+          </div>
+
+          <!-- Enterprise KPI Metric Cards (Real Database Records) -->
+          <div class="hosp-kpi-grid">
+            <div class="hosp-kpi-card">
+              <span class="kpi-label">আজকের মোট ওপিডি রোগী</span>
+              <strong id="kpi-total-patients" class="kpi-value text-accent">০ জন</strong>
+              <small class="kpi-sub">প্রকৃত ডাটাবেজ রেকর্ড</small>
+            </div>
+            <div class="hosp-kpi-card">
+              <span class="kpi-label">বর্তমানে অপেক্ষমাণ রোগী</span>
+              <strong id="kpi-waiting-patients" class="kpi-value text-blue">০ জন</strong>
+              <small class="kpi-sub">চেম্বারের বাইরে লাইনে</small>
+            </div>
+            <div class="hosp-kpi-card">
+              <span class="kpi-label">চিকিৎসা সম্পন্ন</span>
+              <strong id="kpi-completed-patients" class="kpi-value text-green">০ জন</strong>
+              <small class="kpi-sub">পরামর্শ ও প্রেসক্রিপশন সম্পন্ন</small>
+            </div>
+            <div class="hosp-kpi-card">
+              <span class="kpi-label">আদায়কৃত ওপিডি ফি (রেভিনিউ)</span>
+              <strong id="kpi-revenue" class="kpi-value text-green">৳ ০</strong>
+              <small class="kpi-sub">যাচাইকৃত পরিশোধিত ফি</small>
+            </div>
+          </div>
+
+          <!-- Visual Footfall & Hourly Traffic Bar Chart -->
+          <div class="hosp-chart-section">
+            <div class="chart-header">
+              <h4>আজকের ওপিডি রোগীর চাপ ও ভিড় বিশ্লেষণ (Hourly Footfall Distribution)</h4>
+              <span class="chart-legend"><span class="legend-dot"></span> প্রতি ঘণ্টায় চেম্বার ভিজিট সম্পন্ন</span>
+            </div>
+            <div class="visual-bar-chart">
+              <div class="bar-col"><div class="bar" style="height: 35%;"><span>১৮</span></div><small>১০ AM</small></div>
+              <div class="bar-col"><div class="bar" style="height: 55%;"><span>২৮</span></div><small>১১ AM</small></div>
+              <div class="bar-col"><div class="bar" style="height: 70%;"><span>৩৫</span></div><small>১২ PM</small></div>
+              <div class="bar-col"><div class="bar" style="height: 45%;"><span>২৩</span></div><small>০১ PM</small></div>
+              <div class="bar-col"><div class="bar" style="height: 30%;"><span>১৫</span></div><small>০৪ PM</small></div>
+              <div class="bar-col"><div class="bar" style="height: 80%;"><span>৪০</span></div><small>০৫ PM</small></div>
+              <div class="bar-col"><div class="bar peak" style="height: 95%;"><span>৪৮</span></div><small>০৬ PM</small></div>
+              <div class="bar-col"><div class="bar peak" style="height: 100%;"><span>৫০</span></div><small>০৭ PM</small></div>
+              <div class="bar-col"><div class="bar peak" style="height: 90%;"><span>৪৫</span></div><small>০৮ PM</small></div>
+              <div class="bar-col"><div class="bar" style="height: 60%;"><span>৩০</span></div><small>০৯ PM</small></div>
+            </div>
+          </div>
+
+          <!-- Multi-Doctor Roster Table -->
+          <div class="hosp-roster-section">
+            <div class="roster-header">
+              <h4>আজকের ডাক্তার রোস্টার ও লাইভ সিরিয়াল স্ট্যাটাস</h4>
+              <div class="dept-filter-tabs">
+                <button class="dept-pill active" onclick="filterDept('all')">সব বিভাগ</button>
+                <button class="dept-pill" onclick="filterDept('কার্ডিওলজি')">কার্ডিওলজি</button>
+                <button class="dept-pill" onclick="filterDept('গাইনী')">গাইনী</button>
+                <button class="dept-pill" onclick="filterDept('শিশুরোগ')">শিশুরোগ</button>
+              </div>
+            </div>
+
+            <div class="serial-table-wrapper">
+              <table class="serial-table">
+                <thead>
+                  <tr>
+                    <th>ডাক্তারের নাম ও ডিগ্রি</th>
+                    <th>বিভাগ</th>
+                    <th>কক্ষ নম্বর</th>
+                    <th>মোট বুকিং</th>
+                    <th>বর্তমান সিরিয়াল</th>
+                    <th>চেম্বার স্ট্যাটাস</th>
+                    <th>অ্যাকশন</th>
+                  </tr>
+                </thead>
+                <tbody id="hosp-roster-tbody">
+                  <!-- Injected by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 3: WAITING ROOM TV DISPLAY ================= -->
+    <section id="tv-view" class="tv-display-wrapper">
+      <div class="tv-screen">
+        <header class="tv-header">
+          <div class="tv-logo">
+            <span class="tv-plus">+</span> DocBD Live Chamber Display
+          </div>
+          <div class="tv-hospital-info">
+            <h2>পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি</h2>
+            <p>রুম ৩০২ — অধ্যাপক ডা. মো. রফিকুল ইসলাম (হৃদরোগ ও মেডিসিন বিশেষজ্ঞ)</p>
+          </div>
+          <div class="tv-clock" id="tv-live-clock">--:-- --</div>
+        </header>
+
+        <div class="tv-main-grid">
+          <!-- Big Left: Inside Now -->
+          <div class="tv-now-serving-box">
+            <div class="tv-box-title">বর্তমানে চেম্বারে উপস্থিত</div>
+            <div class="tv-big-token" id="tv-current-serial">৫</div>
+            <div class="tv-patient-call-name" id="tv-current-name">সুফিয়া বেগম</div>
+            <div class="tv-serving-status">পরামর্শ চলছে...</div>
+          </div>
+
+          <!-- Right: Upcoming Queue -->
+          <div class="tv-upcoming-box">
+            <div class="tv-box-title">পরবর্তী অপেক্ষমাণ সিরিয়ালসমূহ</div>
+            <div class="tv-queue-list" id="tv-queue-list">
+              <!-- Injected by JS -->
+            </div>
+            <div class="tv-scroll-notice">
+              অনুগ্রহ করে আপনার সিরিয়াল আসার অন্তত ১০ মিনিট পূর্বে রুমের দরজার সামনে উপস্থিত থাকুন।
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Booking Flow Modal (Patient Side) -->
+  <div id="booking-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-doc-title">সিরিয়াল বুকিং কনফার্মেশন</h3>
+        <button class="btn-close" onclick="closeBookingModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-doctor-summary">
+          <strong id="bm-doc-name">অধ্যাপক ডা. মো. রফিকুল ইসলাম</strong>
+          <p id="bm-doc-chamber">পপুলার ডায়াগনস্টিক, ধানমন্ডি • চেম্বার সময়: সন্ধ্যা ৭:০০ - রাত ১০:০০</p>
+        </div>
+
+        <div class="form-group">
+          <label>রোগীর নাম</label>
+          <input type="text" id="bm-patient-name" placeholder="রোগীর পূর্ণ নাম লিখুন">
+        </div>
+
+        <div class="form-group">
+          <label>মোবাইল নম্বর (SMS কনফার্মেশনের জন্য)</label>
+          <input type="tel" id="bm-patient-phone" placeholder="01XXXXXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label>বুকিংয়ের ধরন</label>
+          <div class="radio-cards">
+            <label class="radio-card active">
+              <input type="radio" name="visit-type" value="new" checked>
+              <span>নতুন রোগী (ফি: ১,০০০ ৳)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="visit-type" value="followup">
+              <span>ফলো-আপ (ফি: ৬০০ ৳)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>পেমেন্ট পদ্ধতি</label>
+          <div class="payment-method-box">
+            <label class="pay-option active">
+              <input type="radio" name="pay-method" value="cash" checked>
+              <span>💵 চেম্বারে নগদ পরিশোধ (Cash-at-Chamber) — <strong>ডিফল্ট</strong></span>
+            </label>
+            <label class="pay-option">
+              <input type="radio" name="pay-method" value="bkash">
+              <span>📱 bKash / Nagad অনলাইন পেমেন্ট (ঐচ্ছিক)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="booking-guarantee-note">
+          🔒 <strong>DocBD নিশ্চয়তা:</strong> আপনার এই তথ্য সরাসরি ডাক্তারের চেম্বার ছাড়া কোথাও শেয়ার করা হবে না। কোনো অগ্রিম বুকিং ফি নেই।
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeBookingModal()">বাতিল</button>
+        <button class="btn-primary" onclick="confirmBookingFromModal()">
+          ✓ সিরিয়াল নিশ্চিত করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Walk-in Entry Modal (Compounder Side) -->
+  <div id="walkin-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>+ ওয়াক-ইন / টেলিফোন রোগী এন্ট্রি</h3>
+        <button class="btn-close" onclick="closeWalkinModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>রোগীর নাম *</label>
+          <input type="text" id="wi-patient-name" placeholder="যেমন: মো. করিমুজ্জামান">
+        </div>
+
+        <div class="form-group">
+          <label>মোবাইল নম্বর * (তাৎক্ষণিক SMS যাবে)</label>
+          <input type="tel" id="wi-patient-phone" placeholder="017XXXXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label>রোগীর ধরন ও ফি</label>
+          <select id="wi-patient-type">
+            <option value="new">নতুন রোগী — ১,০০০ ৳</option>
+            <option value="followup">ফলো-আপ রোগী — ৬০০ ৳</option>
+            <option value="report">রিপোর্ট দেখানো — ৩০০ ৳</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>বুকিংয়ের মাধ্যম</label>
+          <select id="wi-booking-source">
+            <option value="walkin">সরাসরি চেম্বারে এসে (Walk-in)</option>
+            <option value="phone">টেলিফোনে বুকিং (Phone)</option>
+            <option value="emergency">জরুরি রোগী (Emergency Fast-track)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>নগদ ফি গ্রহণ</label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="wi-paid-status" checked>
+            <span>চেম্বারে নগদ ফি জমা হয়েছে (SMS রসিদ পাঠানো হবে)</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeWalkinModal()">বাতিল</button>
+        <button class="btn-primary" onclick="saveWalkinPatient()">
+          ✓ সিরিয়াল যুক্ত করুন ও SMS পাঠান
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Family Switcher Modal -->
+  <div id="family-modal" class="modal-backdrop hidden">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3>পরিবারের সদস্য নির্বাচন</h3>
+        <button class="btn-close" onclick="closeFamilyModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="family-list">
+          <div class="family-item active" onclick="window.DocBD.switchFamilyMember('আমার নিজস্ব প্রোফাইল')">
+            <span class="f-avatar">স্ব</span>
+            <div>
+              <strong>আমার নিজস্ব প্রোফাইল</strong>
+              <small>মূল অ্যাকাউন্ট হোল্ডার</small>
+            </div>
+            <span class="f-check">✓</span>
+          </div>
+          <div class="family-item" onclick="window.DocBD.switchFamilyMember('পিতা / মাতা')">
+            <span class="f-avatar">অ</span>
+            <div>
+              <strong>পিতা / মাতা</strong>
+              <small>পরিবারের সদস্য</small>
+            </div>
+          </div>
+          <div class="family-item" onclick="window.DocBD.switchFamilyMember('সন্তান')">
+            <span class="f-avatar">স</span>
+            <div>
+              <strong>সন্তান</strong>
+              <small>পরিবারের সদস্য</small>
+            </div>
+          </div>
+        </div>
+        <button class="btn-outline-full" onclick="showToast('নতুন সদস্য যোগ করার ফর্ম লোড হচ্ছে...')">+ নতুন সদস্য যোগ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patient Health Vault Modal -->
+  <div id="vault-modal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3>ডিজিটাল প্রেসক্রিপশন ও হেলথ ভল্ট</h3>
+        <button class="btn-close" onclick="window.DocBD.closeVaultModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Phone Search Lookup Bar -->
+        <div style="background:#f1f5f9; padding:12px; border-radius:8px; margin-bottom:14px; border:1px solid #e2e8f0;">
+          <label style="font-size:0.8rem; font-weight:600; color:#475569; display:block; margin-bottom:6px;">
+            আপনার নিবন্ধিত মোবাইল নম্বর দিয়ে প্রেসক্রিপশন খুঁজুন:
+          </label>
+          <div style="display:flex; gap:8px;">
+            <input type="tel" id="vault-lookup-phone" placeholder="01XXXXXXXXX" style="flex:1; padding:8px 12px; border:1px solid #cbd5e1; border-radius:6px; font-weight:600;">
+            <button class="btn-primary" onclick="window.DocBD.searchPrescriptionVault()" style="padding:8px 16px;">
+              খুঁজুন
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Prescriptions List -->
+        <div id="vault-prescriptions-list">
+          <div style="padding: 16px; text-align: center; color: #64748b;">
+            উপরে আপনার মোবাইল নম্বর লিখে 'খুঁজুন' বাটনে চাপ দিন।
+          </div>
+        </div>
+
+        <!-- Medicine Reminder / Dosage Tracker Section -->
+        <div class="medicine-alarm-tracker">
+          <h4>আজকের ওষুধের রিমাইন্ডার (Medication Schedule)</h4>
+          <div class="alarm-row done">
+            <span>সকাল ৮:৩০ (খাওয়ার পর)</span>
+            <strong>Tab. Bizoran 5/20 mg — ১টি</strong>
+            <span class="badge-taken-clean">✓ সেবন সম্পন্ন</span>
+          </div>
+          <div class="alarm-row pending">
+            <span>রাত ৮:৩০ (খাওয়ার ৩০ মিনিট আগে)</span>
+            <strong>Cap. Seclo 20 mg — ১টি</strong>
+            <button class="btn-take-dose" onclick="markDoseTaken(this)">✓ ওষুধ খেয়েছি</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeVaultModal()">বন্ধ করুন</button>
+        <button class="btn-primary" onclick="downloadPrescriptionPdf()">
+          প্রেসক্রিপশন প্রিন্ট ও PDF ডাউনলোড
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Helpline Modal -->
+  <div id="emergency-modal" class="modal-backdrop hidden">
+    <div class="modal-card modal-sm">
+      <div class="modal-header" style="background:#fee2e2;">
+        <h3 style="color:#b91c1c;">জরুরি অ্যাম্বুলেন্স ও সরকারি হেল্পলাইন</h3>
+        <button class="btn-close" onclick="closeEmergencyModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:#64748b; margin-bottom:12px;">তাত্ক্ষণিক কলের জন্য স্পর্শ করুন:</p>
+        <div class="emergency-list">
+          <div class="emergency-item" onclick="simulateEmergencyCall('999', 'জাতীয় জরুরি সেবা')">
+            <span class="e-icon">🚨</span>
+            <div>
+              <strong>জাতীয় জরুরি সেবা (999)</strong>
+              <small>পুলিশ, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস (টোল ফ্রি)</small>
+            </div>
+            <button class="btn-call-em">কল</button>
+          </div>
+          <div class="emergency-item" onclick="simulateEmergencyCall('16263', 'স্বাস্থ্য বাতায়ন')">
+            <span class="e-icon">📞</span>
+            <div>
+              <strong>স্বাস্থ্য বাতায়ন (16263)</strong>
+              <small>সরকারি ২৪/৭ ডাক্তার পরামর্শ ও সহায়তা</small>
+            </div>
+            <button class="btn-call-em">কল</button>
+          </div>
+          <div class="emergency-item" onclick="simulateEmergencyCall('01713-000001', 'পপুলার আইসিইউ অ্যাম্বুলেন্স')">
+            <span class="e-icon">🚑</span>
+            <div>
+              <strong>পপুলার আইসিইউ অ্যাম্বুলেন্স</strong>
+              <small>ধানমন্ডি ও ঢাকা সিটি সার্বক্ষণিক সার্ভিস</small>
+            </div>
+            <button class="btn-call-em">কল</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verified Payment Recording Modal -->
+  <div id="payment-verify-modal" class="modal-backdrop hidden">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3>যাচাইকৃত ওপিডি পেমেন্ট গ্রহণ</h3>
+        <button class="btn-close" onclick="window.DocBD.closePaymentModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background:#f0fdfa; border:1px solid #ccfbf1; padding:12px; border-radius:8px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:0.75rem; color:#0f766e; font-weight:600;">রোগীর টোকেন</span>
+              <h4 id="pv-serial" style="font-size:1.3rem; color:#0f172a; margin:0;">#১</h4>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:0.75rem; color:#64748b; font-weight:600;">রোগীর নাম</span>
+              <div id="pv-patient-name" style="font-weight:700; color:#0f172a;">নাম</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>পেমেন্ট মাধ্যম (Payment Method)</label>
+          <select id="pv-method" class="form-control" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+            <option value="CASH">ক্যাশ (নগদ চেম্বার কাউন্টার)</option>
+            <option value="BKASH">bKash (বিকাশ মার্চেন্ট পে)</option>
+            <option value="NAGAD">নগদ (Nagad Merchant)</option>
+            <option value="CARD">ডেবিট / ক্রেডিট কার্ড (POS)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+          <label>আদায়কৃত ফি-এর পরিমাণ (৳)</label>
+          <input type="number" id="pv-amount" class="form-control" value="1000" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-weight:700;">
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+          <label>ট্রানজেকশন আইডি (TrxID / স্লিপ নম্বর) [ডিজিটাল পেমেন্টের ক্ষেত্রে]</label>
+          <input type="text" id="pv-trxid" class="form-control" placeholder="যেমন: BK98765432 বা ক্যাশ স্লিপ নং" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+          <label>অর্থ গ্রহণকারী কর্মকর্তা / ক্যাশিয়ার</label>
+          <input type="text" id="pv-cashier" class="form-control" value="কাউন্টার কম্পাউন্ডার ১" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="window.DocBD.closePaymentModal()">বাতিল</button>
+        <button class="btn-primary" onclick="window.DocBD.confirmPayment()">
+          ✓ পেমেন্ট রেকর্ড ও রসিদ নিশ্চিত করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Doctor & Chamber Onboarding Modal -->
+  <div id="doctor-register-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>হাসপাতালে নতুন ডাক্তার ও চেম্বার নিবন্ধন (Onboarding)</h3>
+        <button class="btn-close" onclick="window.DocBD.closeDoctorRegisterModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>ডাক্তারের পূর্ণ নাম (Title সহ) *</label>
+          <input type="text" id="reg-doc-name" placeholder="যেমন: ডা. মাহফুজুর রহমান" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+          <div class="form-group">
+            <label>বিএমডিসি নম্বর (BMDC Reg No) *</label>
+            <input type="text" id="reg-doc-bmdc" placeholder="যেমন: A-54321" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+          </div>
+          <div class="form-group">
+            <label>স্পেশালিটি / বিভাগ *</label>
+            <input type="text" id="reg-doc-spec" placeholder="যেমন: হৃদরোগ ও মেডিসিন বিশেষজ্ঞ" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:10px;">
+          <label>ডিগ্রিসমূহ (Degrees)</label>
+          <input type="text" id="reg-doc-degree" placeholder="যেমন: MBBS, FCPS (Medicine), MD" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+          <div class="form-group">
+            <label>হাসপাতাল / ডায়াগনস্টিক শাখা</label>
+            <input type="text" id="reg-doc-hosp" value="পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+          </div>
+          <div class="form-group">
+            <label>চেম্বার / রুম নম্বর *</label>
+            <input type="text" id="reg-doc-room" placeholder="যেমন: কক্ষ ২০৫, ২য় তলা" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+          </div>
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+          <div class="form-group">
+            <label>নতুন রোগীর পরামর্শ ফি (৳) *</label>
+            <input type="number" id="reg-doc-fee" value="1000" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+          </div>
+          <div class="form-group">
+            <label>ফলো-আপ ফি (৳)</label>
+            <input type="number" id="reg-doc-followup-fee" value="600" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="window.DocBD.closeDoctorRegisterModal()">বাতিল</button>
+        <button class="btn-primary" onclick="window.DocBD.submitDoctorRegister()">
+          ✓ ডাক্তার ও চেম্বার নিবন্ধন নিশ্চিত করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telehealth Video Call Modal -->
+  <div id="video-call-modal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width: 680px; background:#0f172a; color:#ffffff;">
+      <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.1);">
+        <h3 style="color:#ffffff;">অনলাইন ফলো-আপ ভিডিও পরামর্শ</h3>
+        <button class="btn-close" style="color:#ffffff;" onclick="endVideoCall()">✕</button>
+      </div>
+      <div class="modal-body" style="padding:16px;">
+        <div class="video-stage">
+          <div class="doctor-video-feed">
+            <div class="doc-video-avatar">ডা. রফিকুল</div>
+            <div class="doc-video-overlay">
+              <strong>অধ্যাপক ডা. মো. রফিকুল ইসলাম</strong>
+              <small>এনক্রিপ্টেড অডিও-ভিডিও কনসালটেশন (WebRTC)</small>
+            </div>
+            <div class="call-duration-timer" id="call-timer">০০:০৫</div>
+          </div>
+          <div class="patient-pip-feed">
+            <span>আপনার ক্যামেরা</span>
+          </div>
+        </div>
+
+        <div class="video-controls-bar">
+          <button class="btn-vid-ctrl" id="btn-toggle-mic" onclick="toggleMic()">মাইক্রোফোন মিউট</button>
+          <button class="btn-vid-ctrl" id="btn-toggle-cam" onclick="toggleCam()">ক্যামেরা বন্ধ</button>
+          <button class="btn-vid-ctrl btn-end-call" onclick="endVideoCall()">কল শেষ করুন</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Website Widget Modal -->
+  <div id="widget-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>হাসপাতালের ওয়েবসাইট ও ফেসবুক বুকিং উইজেট কোড</h3>
+        <button class="btn-close" onclick="closeWidgetModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:#475569; margin-bottom:12px;">
+          আপনার হাসপাতালের নিজস্ব ওয়েবসাইট বা পোর্টালে নিচের কোডটি বসালে রোগীরা সরাসরি চেম্বার বুকিং করতে পারবেন:
+        </p>
+        <div class="code-snippet-box">
+          <code>&lt;iframe src="https://docbd.com/widget/popular-dhanmondi" width="100%" height="520" frameborder="0" allow="geolocation"&gt;&lt;/iframe&gt;</code>
+        </div>
+        <button class="btn-outline-full" style="margin-top:12px;" onclick="copyWidgetCode()">
+          কোড কপি করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

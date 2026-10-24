@@ -1,0 +1,21 @@
+{
+  "name": "DocBD — কাছের ডাক্তার, আসল সিরিয়াল",
+  "short_name": "DocBD",
+  "description": "বাংলাদেশের হাসপাতাল ও চেম্বারের জন্য রিয়েল-টাইম লাইভ সিরিয়াল এবং ডিজিটাল রোগী প্ল্যাটফর্ম",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0d9488",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["medical", "health", "lifestyle"],
+  "lang": "bn-BD",
+  "dir": "ltr"
+}

@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL with PostGIS Extension
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: docbd_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: docbd_admin
+      POSTGRES_PASSWORD: StrongSecretPassword2026!
+      POSTGRES_DB: docbd_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docbd_admin -d docbd_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. DocBD Fastify & WebSocket Real-time API
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: docbd_api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      DATABASE_URL: postgresql://docbd_admin:StrongSecretPassword2026!@postgres:5432/docbd_prod?schema=public
+      JWT_SECRET: super_secret_jwt_key_docbd_2026
+      SMS_PROVIDER: mock
+    ports:
+      - "5000:5000"
+
+  # 3. Frontend Web App & PWA (Nginx)
+  frontend:
+    image: nginx:alpine
+    container_name: docbd_frontend
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./style.css:/usr/share/nginx/html/style.css:ro
+      - ./app.js:/usr/share/nginx/html/app.js:ro
+      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
+      - ./sw.js:/usr/share/nginx/html/sw.js:ro
+      - ./icon.svg:/usr/share/nginx/html/icon.svg:ro
+
+volumes:
+  postgres_data:

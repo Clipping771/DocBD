@@ -1,0 +1,288 @@
+{
+  "updatedAt": "2026-10-23T23:02:46.765Z",
+  "chambers": [
+    {
+      "chamberId": "ch-pop-302",
+      "docId": 1,
+      "docName": "অধ্যাপক ডা. মো. রফিকুল ইসলাম",
+      "degree": "MBBS, FCPS (Cardiology), MD",
+      "specialty": "হৃদরোগ ও মেডিসিন বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ৩০২, ২য় তলা",
+      "currentInsideSerial": 7,
+      "avgMinutesPerPatient": 10,
+      "fee": 1000,
+      "queue": [
+        {
+          "serial": 1,
+          "name": "আব্দুল খালেক",
+          "phone": "01711-100001",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 2,
+          "name": "রাবেয়া খাতুন",
+          "phone": "01822-100002",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 3,
+          "name": "মো. জসিম উদ্দিন",
+          "phone": "01933-100003",
+          "source": "phone",
+          "checkin": true,
+          "fee": 600,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 4,
+          "name": "ফারহানা আফরোজ",
+          "phone": "01744-100004",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 5,
+          "name": "সুফিয়া বেগম",
+          "phone": "01555-100005",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 6,
+          "name": "মাহমুদুল হাসান",
+          "phone": "01766-100006",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 7,
+          "name": "আনোয়ারুল ইসলাম",
+          "phone": "01877-100007",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "inside"
+        },
+        {
+          "serial": 8,
+          "name": "নাজমুল হুদা",
+          "phone": "01988-100008",
+          "source": "phone",
+          "checkin": false,
+          "fee": 600,
+          "paid": false,
+          "status": "waiting"
+        },
+        {
+          "serial": 9,
+          "name": "তাহমিনা আক্তার",
+          "phone": "01799-100009",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 10,
+          "name": "কামাল উদ্দিন",
+          "phone": "01811-100010",
+          "source": "walkin",
+          "checkin": false,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 11,
+          "name": "রোজিনা পারভীন",
+          "phone": "01722-100011",
+          "source": "online",
+          "checkin": true,
+          "fee": 600,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 12,
+          "name": "আবুল কালাম (বাবা)",
+          "phone": "01711-234567",
+          "source": "online",
+          "checkin": false,
+          "fee": 1000,
+          "paid": false,
+          "status": "waiting"
+        },
+        {
+          "serial": 13,
+          "name": "শামসুল আলম",
+          "phone": "01944-100013",
+          "source": "phone",
+          "checkin": false,
+          "fee": 1000,
+          "paid": false,
+          "status": "waiting"
+        },
+        {
+          "serial": 14,
+          "name": "শাহীনুর রহমান",
+          "phone": "01855-100014",
+          "source": "online",
+          "checkin": false,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 15,
+          "name": "মো. আলাউদ্দিন",
+          "phone": "01766-100015",
+          "source": "walkin",
+          "checkin": false,
+          "fee": 600,
+          "paid": true,
+          "status": "waiting"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-pop-201",
+      "docId": 2,
+      "docName": "ডা. নুসরাত জাহান চৌধুরী",
+      "degree": "MBBS, DGO, FCPS (Gynae & Obs)",
+      "specialty": "স্ত্রী ও প্রসূতি বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ২০১, ১ম তলা",
+      "currentInsideSerial": 12,
+      "avgMinutesPerPatient": 12,
+      "fee": 800,
+      "queue": [
+        {
+          "serial": 11,
+          "name": "নাজমা বেগম",
+          "phone": "01712-300001",
+          "source": "online",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 12,
+          "name": "রীতা আক্তার",
+          "phone": "01819-300002",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "inside"
+        },
+        {
+          "serial": 13,
+          "name": "মমতাজ বেগম",
+          "phone": "01911-300003",
+          "source": "online",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "waiting"
+        },
+        {
+          "serial": 14,
+          "name": "ফাতেমা তুজ জোহরা",
+          "phone": "01715-300004",
+          "source": "online",
+          "checkin": false,
+          "fee": 800,
+          "paid": false,
+          "status": "waiting"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-pop-108",
+      "docId": 3,
+      "docName": "ডা. সাজ্জাদ হোসেন",
+      "degree": "MBBS, MD (Pediatrics)",
+      "specialty": "নবজাতক ও শিশুরোগ বিশেষজ্ঞ 🧸",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ১০৮, নিচতলা",
+      "currentInsideSerial": 8,
+      "avgMinutesPerPatient": 8,
+      "fee": 1000,
+      "queue": [
+        {
+          "serial": 7,
+          "name": "ছোট্ট আরিয়ান",
+          "phone": "01711-234567",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "done"
+        },
+        {
+          "serial": 8,
+          "name": "আদিবা তানজিম",
+          "phone": "01815-400002",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "inside"
+        },
+        {
+          "serial": 9,
+          "name": "মুহাম্মদ সামির",
+          "phone": "01920-400003",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting"
+        }
+      ]
+    }
+  ],
+  "prescriptions": {
+    "সুফিয়া বেগম": [
+      {
+        "id": "rx-seed-1",
+        "patientName": "সুফিয়া বেগম",
+        "patientPhone": "01555-100005",
+        "docName": "অধ্যাপক ডা. মো. রফিকুল ইসলাম",
+        "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+        "chamberRoom": "কক্ষ ৩০২, ২য় তলা",
+        "diagnosis": "Essential Hypertension & Mild Angina",
+        "date": "২৩ অক্টোবর, ২০২৬",
+        "medications": [
+          "Tab. Bizoran 5/20 mg — ১ + ০ + ০ (সকালে খাওয়ার পর) • ৩০ দিন",
+          "Cap. Seclo 20 mg — ১ + ০ + ১ (খাওয়ার ৩০ মিনিট পূর্বে) • ৩০ দিন",
+          "Tab. Napa Extra 500/65 mg — ব্যথা হলে ১টি ভরা পেটে"
+        ],
+        "tests": "ECG (12-Lead), Serum Creatinine, Echocardiography",
+        "followupDate": "২০২৬-১০-৩০"
+      }
+    ]
+  }
+}

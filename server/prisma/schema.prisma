@@ -1,0 +1,267 @@
+// DocBD Production Database Schema
+// Database: PostgreSQL with PostGIS Geospatial extensions
+// ORM: Prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. User & Authentication (পাসওয়ার্ডবিহীন মোবাইল নম্বর + OTP)
+model User {
+  id            String         @id @default(uuid())
+  phone         String         @unique // বাংলাদেশের ১১ ডিজিটের মোবাইল নম্বর
+  name          String?
+  role          UserRole       @default(PATIENT) // PATIENT, COMPOUNDER, DOCTOR, HOSPITAL_ADMIN
+  isVerified    Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  familyMembers FamilyMember[]
+  bookings      BookingSerial[]
+  prescriptions Prescription[]
+  reports       MedicalReport[]
+
+  @@index([phone])
+}
+
+enum UserRole {
+  PATIENT
+  COMPOUNDER
+  DOCTOR
+  HOSPITAL_ADMIN
+}
+
+// 2. Family Members (ফ্যামিলি প্রোফাইল — বাবা-মা, সন্তান, স্বামী/স্ত্রী)
+model FamilyMember {
+  id           String         @id @default(uuid())
+  userId       String
+  name         String
+  relationship String         // বাবা, মা, সন্তান, স্বামী, স্ত্রী ইত্যাদি
+  age          Int?
+  gender       String?        // পুরুষ, মহিলা, অন্যান্য
+  medicalNotes String?        // ডায়াবেটিস, উচ্চ রক্তচাপ ইত্যাদি পূর্ববর্তী রোগ
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookings     BookingSerial[]
+
+  @@index([userId])
+}
+
+// 3. Hospital & Diagnostic Centers (DGHS অনুমোদিত প্রতিষ্ঠান — B2B SaaS)
+model Hospital {
+  id            String         @id @default(uuid())
+  dghsRegNo     String?        // স্বাস্থ্য অধিদপ্তর (DGHS) লাইসেন্স নম্বর
+  name          String         // যেমন: পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি
+  branch        String?        // শাখা
+  division      String         @default("ঢাকা")
+  district      String         @default("ঢাকা")
+  thana         String         // যেমন: ধানমন্ডি, মিরপুর, উত্তরা
+  address       String
+  latitude      Float          // GPS অক্ষাংশ
+  longitude     Float          // GPS দ্রাঘিমাংশ
+  contactPhone  String?
+  hasEmergency  Boolean        @default(false)
+  ambulanceNo   String?
+  subscriptionTier SubscriptionTier @default(FREE) // FREE, CLINIC, HOSPITAL
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  chambers      Chamber[]
+
+  @@index([district, thana])
+}
+
+enum SubscriptionTier {
+  FREE
+  DOCTOR_PRO
+  CLINIC
+  HOSPITAL
+}
+
+// 4. Doctor Profile & BMDC Verification (BMDC লাইসেন্স যাচাইকৃত ডাক্তার)
+model Doctor {
+  id              String         @id @default(uuid())
+  bmdcRegNo       String         @unique // BMDC রেজিস্ট্রেশন নম্বর (যেমন: A-28491)
+  isBmdcVerified  Boolean        @default(true)
+  name            String         // যেমন: অধ্যাপক ডা. মো. রফিকুল ইসলাম
+  degrees         String         // MBBS, FCPS, MD
+  specialty       String         // হৃদরোগ ও মেডিসিন বিশেষজ্ঞ
+  gender          String         // MALE, FEMALE
+  experienceYears Int?
+  bio             String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  chambers        Chamber[]
+  prescriptions   Prescription[]
+
+  @@index([specialty])
+  @@index([bmdcRegNo])
+}
+
+// 5. Chamber (একটি হাসপাতালে ডাক্তারের নির্দিষ্ট চেম্বার ও ফি)
+model Chamber {
+  id              String         @id @default(uuid())
+  doctorId        String
+  hospitalId      String
+  roomNumber      String         // যেমন: রুম ৩০২, ২য় তলা
+  newPatientFee   Int            // যেমন: ১০০০ ৳
+  followupFee     Int            // যেমন: ৬০০ ৳
+  reportFee       Int            @default(৩০০)
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  doctor          Doctor         @relation(fields: [doctorId], references: [id])
+  hospital        Hospital       @relation(fields: [hospitalId], references: [id])
+  schedules       Schedule[]
+  serials         BookingSerial[]
+  queueLogs       QueueLog[]
+
+  @@index([doctorId])
+  @@index([hospitalId])
+}
+
+// 6. Chamber Schedule (সাপ্তাহিক শিডিউল ও সময়সূচি)
+model Schedule {
+  id              String         @id @default(uuid())
+  chamberId       String
+  dayOfWeek       Int            // 0 (রবি) থেকে 6 (শনিবার)
+  startTime       String         // যেমন: "18:00"
+  endTime         String         // যেমন: "21:30"
+  maxSerials      Int            @default(25) // প্রতিদিনের সর্বোচ্চ সিরিয়াল
+  isHoliday       Boolean        @default(false)
+
+  chamber         Chamber        @relation(fields: [chamberId], references: [id], onDelete: Cascade)
+
+  @@index([chamberId, dayOfWeek])
+}
+
+// 7. Booking Serial (একমাত্র ডিজিটাল সিরিয়াল খাতা — Single Source of Truth)
+model BookingSerial {
+  id              String         @id @default(uuid())
+  chamberId       String
+  userId          String?        // অনলাইন ব্যবহারকারীর ক্ষেত্রে
+  familyMemberId  String?        // পরিবারের সদস্যের বুকিং হলে
+  patientName     String         // রোগীর নাম
+  patientPhone    String         // রোগীর মোবাইল (SMS ও OTP-র জন্য)
+  serialNumber    Int            // ১, ২, ৩... বরাদ্দকৃত সিরিয়াল
+  bookingDate     DateTime       @db.Date
+  bookingSource   BookingSource  @default(ONLINE) // ONLINE, WALKIN, PHONE, EMERGENCY
+  checkInStatus   Boolean        @default(false)  // রোগী চেম্বারে পৌঁছেছেন কিনা
+  checkInTime     DateTime?
+  paymentMethod   PaymentMethod  @default(CASH_AT_CHAMBER) // ডিফল্ট চেম্বারে নগদ
+  paymentStatus   PaymentStatus  @default(PENDING) // PENDING, PAID, REFUNDED
+  feeAmount       Int            // ফি-এর পরিমাণ
+  queueStatus     QueueStatus    @default(WAITING) // WAITING, INSIDE, DONE, NOSHOW, HOLD
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  chamber         Chamber        @relation(fields: [chamberId], references: [id])
+  user            User?          @relation(fields: [userId], references: [id])
+  familyMember    FamilyMember?  @relation(fields: [familyMemberId], references: [id])
+  prescription    Prescription?
+
+  @@unique([chamberId, bookingDate, serialNumber])
+  @@index([chamberId, bookingDate, queueStatus])
+}
+
+enum BookingSource {
+  ONLINE
+  WALKIN
+  PHONE
+  EMERGENCY
+}
+
+enum PaymentMethod {
+  CASH_AT_CHAMBER
+  BKASH
+  NAGAD
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+enum QueueStatus {
+  WAITING
+  INSIDE
+  DONE
+  NOSHOW
+  HOLD
+}
+
+// 8. Queue Audit Log (রিয়েল-টাইম কিউ ইভেন্ট হিস্ট্রি)
+model QueueLog {
+  id          String      @id @default(uuid())
+  chamberId   String
+  actionType  String      // CALL_NEXT, VISIT_DONE, NO_SHOW, HOLD, DELAY_ALERT
+  serialNum   Int?
+  notes       String?
+  performedBy String?     // কম্পাউন্ডারের ইউজার আইডি
+  timestamp   DateTime    @default(now())
+
+  chamber     Chamber     @relation(fields: [chamberId], references: [id])
+
+  @@index([chamberId, timestamp])
+}
+
+// 9. Digital Prescription (ই-প্রেসক্রিপশন ও ফলো-আপ রিকল)
+model Prescription {
+  id              String         @id @default(uuid())
+  bookingSerialId String         @unique
+  doctorId        String
+  userId          String
+  diagnosis       String         // যেমন: Hypertension, Type-2 Diabetes
+  medications     Json           // ওষুধের তালিকা: [{ brand: "Napa", dose: "1+0+1", timing: "after_meal", days: 7 }]
+  advisedTests    String?        // ইসিজি, লিপিড প্রোফাইল
+  dietaryAdvice   String?        // খাদ্য ও জীবনযাপন পরামর্শ
+  followupDate    DateTime?      // ফলো-আপ তারিখ (স্বয়ংক্রিয় SMS স্মরণবার্তা পাঠাবে)
+  createdAt       DateTime       @default(now())
+
+  bookingSerial   BookingSerial  @relation(fields: [bookingSerialId], references: [id])
+  doctor          Doctor         @relation(fields: [doctorId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([doctorId])
+  @@index([followupDate])
+}
+
+// 10. Medical Diagnostic Reports (রোগীর টেস্ট রিপোর্ট ভল্ট)
+model MedicalReport {
+  id          String      @id @default(uuid())
+  userId      String
+  testName    String      // যেমন: Lipid Profile, Chest X-Ray
+  labName     String?     // যেমন: পপুলার ডায়াগনস্টিক, ধানমন্ডি
+  fileUrl     String      // Cloudflare R2 / S3 ফাইল লিংক
+  fileType    String      // PDF, JPG
+  reportDate  DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// 11. SMS Notification Log (বাংলা SMS ও নোটিফিকেশন ট্র্যাক রেকর্ড)
+model NotificationLog {
+  id          String      @id @default(uuid())
+  phone       String
+  channel     String      @default("SMS") // SMS, WHATSAPP, PUSH
+  message     String      // বাংলা SMS টেক্সট
+  status      String      @default("DELIVERED") // DELIVERED, FAILED
+  gatewayId   String?     // SSL Wireless / Greenweb ট্রানজেকশন আইডি
+  createdAt   DateTime    @default(now())
+
+  @@index([phone, createdAt])
+}
