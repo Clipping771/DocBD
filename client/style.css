@@ -2536,3 +2536,288 @@ body {
     display: none !important;
   }
 }
+
+/* ===================================================================
+   MULTI-TENANT HOSPITAL & SUPER ADMIN PLATFORM STYLES
+   =================================================================== */
+.web-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.web-nav-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.web-nav-link:hover, .web-nav-link.active {
+  color: var(--primary);
+  background: var(--bg-subtle);
+}
+
+.btn-portal-access {
+  background: linear-gradient(135deg, #0f766e, #0e5e57);
+  color: #ffffff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(15, 118, 110, 0.25);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-portal-access:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.35);
+}
+
+/* Hospital Directory Cards */
+.hospitals-section {
+  margin: 28px 0;
+  width: 100%;
+}
+
+.section-hero-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.section-hero-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.hospitals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.hospital-card {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.hospital-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: #99f6e4;
+}
+
+.hosp-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.hosp-badge-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  background: #f0fdfa;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ccfbf1;
+}
+
+.hosp-card-head h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 2px 0;
+  line-height: 1.3;
+}
+
+.hosp-branch-text {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+}
+
+.hosp-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hosp-dghs-badge {
+  font-size: 0.725rem;
+  font-weight: 600;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.hosp-doc-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0f766e;
+  background: #f0fdfa;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid #ccfbf1;
+}
+
+.hosp-address-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.hosp-action-footer {
+  margin-top: 4px;
+}
+
+.btn-view-hosp-docs {
+  width: 100%;
+  background: #f8fafc;
+  color: #0f766e;
+  border: 1px solid #ccfbf1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-view-hosp-docs:hover {
+  background: #0f766e;
+  color: #ffffff;
+  border-color: #0f766e;
+}
+
+/* Super Admin Dashboard */
+.superadmin-dashboard-frame {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.sa-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.sa-kpi-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sa-kpi-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.sa-kpi-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Portal Access Switcher Grid */
+.portal-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.portal-role-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.portal-role-card:hover {
+  border-color: #0f766e;
+  box-shadow: 0 4px 16px rgba(15, 118, 110, 0.15);
+  transform: translateY(-2px);
+}
+
+.portal-role-icon {
+  font-size: 1.8rem;
+  margin-bottom: 2px;
+}
+
+.portal-role-card h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.portal-role-card p {
+  font-size: 0.775rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.portal-role-btn {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f766e;
+}
+
+@media (max-width: 768px) {
+  .web-nav-links {
+    display: none;
+  }
+}
+

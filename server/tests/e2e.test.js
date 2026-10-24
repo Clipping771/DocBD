@@ -174,10 +174,10 @@ async function runTests() {
 
     // 11. Hospital Analytics Calculation
     console.log('\n--- Test Phase: Real Database Analytics ---');
-    const analytics = await request('/api/hospital/analytics');
-    assert(analytics.body.totalRegistered === 2, 'Analytics: Total registered patients = 2');
-    assert(analytics.body.totalRevenue === 1000, 'Analytics: Total revenue = ৳1,000 from verified payments');
-    assert(analytics.body.activeChambers === 1, 'Analytics: Active chambers = 1');
+    const finalAnalytics = await request('/api/hospital/analytics');
+    assert(finalAnalytics.body.totalRegistered === 2, 'Analytics: Total registered patients = 2');
+    assert(finalAnalytics.body.totalRevenue === 1000, 'Analytics: Total revenue = ৳1,000 from verified payments');
+    assert(finalAnalytics.body.activeChambers === 1, 'Analytics: Active chambers = 1');
 
     // 12. Waiting TV Signage Privacy Check
     console.log('\n--- Test Phase: Waiting TV Signage Privacy Compliance ---');

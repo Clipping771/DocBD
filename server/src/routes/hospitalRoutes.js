@@ -30,14 +30,73 @@ async function hospitalRoutes(fastify, options) {
     return { count: withDistance.length, hospitals: withDistance };
   });
 
+  // Public & Multi-tenant Hospitals Directory
+  fastify.get('/api/hospitals', async () => {
+    const list = queueEngine.getHospitals();
+    return { count: list.length, hospitals: list };
+  });
+
+  // Specific Hospital Details
+  fastify.get('/api/hospitals/:hospitalId', async (request, reply) => {
+    const { hospitalId } = request.params;
+    const hospital = queueEngine.getHospitalById(hospitalId);
+    if (!hospital) return reply.code(404).send({ error: "Hospital not found" });
+    return hospital;
+  });
+
+  // Hospital-Specific Doctors
+  fastify.get('/api/hospitals/:hospitalId/doctors', async (request) => {
+    const { hospitalId } = request.params;
+    const docs = queueEngine.getDoctorDirectory(hospitalId);
+    return { count: docs.length, hospitalId, doctors: docs };
+  });
+
+  // Hospital Admin onboards doctor to their specific hospital
+  fastify.post('/api/hospitals/:hospitalId/doctors', async (request, reply) => {
+    const { hospitalId } = request.params;
+    try {
+      const chamber = queueEngine.addDoctorToHospital(hospitalId, request.body || {});
+      return { success: true, chamber };
+    } catch (e) {
+      return reply.code(400).send({ error: e.message });
+    }
+  });
+
+  // System Super Admin: Create a new Hospital & assign its Hospital Admin
+  fastify.post('/api/system/hospitals', async (request, reply) => {
+    try {
+      const hospital = queueEngine.createHospital(request.body || {});
+      return { success: true, hospital };
+    } catch (e) {
+      return reply.code(400).send({ error: e.message });
+    }
+  });
+
+  // System Super Admin: Update/Assign Hospital Admin
+  fastify.post('/api/system/hospital-admins', async (request, reply) => {
+    const { hospitalId, adminName, adminEmail, adminPhone } = request.body || {};
+    try {
+      const updated = queueEngine.updateHospitalAdmin(hospitalId, { adminName, adminEmail, adminPhone });
+      return { success: true, hospital: updated };
+    } catch (e) {
+      return reply.code(400).send({ error: e.message });
+    }
+  });
+
+  // System Super Admin: Global Platform Metrics
+  fastify.get('/api/system/super-metrics', async () => {
+    return queueEngine.getSuperAdminMetrics();
+  });
+
   // Chambers summary for central OPD monitoring
   fastify.get('/api/chambers/summary', async () => {
     return { chambers: queueEngine.getAllChambersSummary() };
   });
 
   // Live Hospital Analytics derived from actual database records
-  fastify.get('/api/hospital/analytics', async () => {
-    return queueEngine.getHospitalAnalytics();
+  fastify.get('/api/hospital/analytics', async (request) => {
+    const { hospitalId } = request.query || {};
+    return queueEngine.getHospitalAnalytics(hospitalId);
   });
 
   // Waiting Room TV Signage (Strict Privacy Enforcement)

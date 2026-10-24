@@ -1,13 +1,142 @@
 // Modals Component — Professional Healthcare Interface
 import { playBeepSound } from '../services/audioService.js';
 import { showToast } from '../utils/toast.js';
-import { apiRecordVerifiedPayment, apiRegisterDoctor, fetchPrescriptions } from '../services/apiService.js';
+import { 
+  apiRecordVerifiedPayment, 
+  apiRegisterDoctor, 
+  fetchPrescriptions,
+  apiCreateHospital,
+  apiAddHospitalDoctor
+} from '../services/apiService.js';
 
 let callTimerInterval = null;
 let callSeconds = 0;
 let pendingPaymentData = null;
 
-// 1. Booking Modal
+// 4. System Super Admin: Hospital Creation Modal
+export function openHospitalRegisterModal() {
+  const modal = document.getElementById('hospital-register-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+export function closeHospitalRegisterModal() {
+  const modal = document.getElementById('hospital-register-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+export async function submitHospitalRegister() {
+  const name = document.getElementById('hr-name')?.value;
+  const branch = document.getElementById('hr-branch')?.value;
+  const dghs = document.getElementById('hr-dghs')?.value;
+  const address = document.getElementById('hr-address')?.value;
+  const phone = document.getElementById('hr-phone')?.value;
+  const emergency = document.getElementById('hr-emergency')?.value;
+  const adminName = document.getElementById('hr-admin-name')?.value;
+  const adminEmail = document.getElementById('hr-admin-email')?.value;
+  const adminPhone = document.getElementById('hr-admin-phone')?.value;
+
+  if (!name || !dghs || !adminName || !adminEmail) {
+    showToast('হাসপাতালের নাম, ডিজিএইচএস নম্বর এবং অ্যাডমিনের নাম ও ইমেইল আবশ্যক', false);
+    return;
+  }
+
+  try {
+    const res = await apiCreateHospital({
+      name,
+      branch,
+      dghsRegNo: dghs,
+      address,
+      contactPhone: phone,
+      emergencyPhone: emergency || '16263',
+      adminName,
+      adminEmail,
+      adminPhone
+    });
+
+    if (res.success) {
+      playBeepSound();
+      showToast(`হাসপাতাল [${name}] এবং অ্যাডমিন [${adminName}] সফলভাবে নিবন্ধিত হয়েছে!`);
+      closeHospitalRegisterModal();
+      if (window.DocBD && window.DocBD.reloadSuperAdmin) {
+        window.DocBD.reloadSuperAdmin();
+      }
+    }
+  } catch (e) {
+    showToast(`হাসপাতাল নিবন্ধন ব্যর্থ: ${e.message}`, false);
+  }
+}
+
+// 5. Hospital Admin: Doctor & Chamber Onboarding Modal
+export function openDoctorRegisterModal(hospitalId = null, hospitals = []) {
+  const modal = document.getElementById('doctor-register-modal');
+  const selectElem = document.getElementById('reg-doc-hosp-select');
+  
+  if (selectElem && hospitals && hospitals.length > 0) {
+    selectElem.innerHTML = hospitals.map(h => `
+      <option value="${h.id}" ${h.id === hospitalId ? 'selected' : ''}>${h.name} (${h.branch || 'ঢাকা'})</option>
+    `).join('');
+  }
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+export function closeDoctorRegisterModal() {
+  const modal = document.getElementById('doctor-register-modal');
+  if (modal) modal.classList.add('hidden');
+}
+
+export async function submitDoctorRegister() {
+  const hospitalId = document.getElementById('reg-doc-hosp-select')?.value || 'hosp-pop-dhanmondi';
+  const name = document.getElementById('reg-doc-name')?.value;
+  const bmdc = document.getElementById('reg-doc-bmdc')?.value;
+  const degrees = document.getElementById('reg-doc-degree')?.value;
+  const specialty = document.getElementById('reg-doc-spec')?.value;
+  const room = document.getElementById('reg-doc-room')?.value;
+  const fee = document.getElementById('reg-doc-fee')?.value;
+  const followupFee = document.getElementById('reg-doc-followup')?.value;
+
+  if (!name || !bmdc || !specialty) {
+    showToast('ডাক্তারের নাম, বিএমডিসি কোড এবং বিশেষত্ব আবশ্যক', false);
+    return;
+  }
+
+  try {
+    const res = await apiAddHospitalDoctor(hospitalId, {
+      name,
+      bmdcRegNo: bmdc,
+      degrees,
+      specialty,
+      roomNumber: room || "ওপিডি কক্ষ ১",
+      fee: Number(fee) || 800,
+      followupFee: Number(followupFee) || 500
+    });
+
+    if (res.success) {
+      playBeepSound();
+      showToast(`ডা. ${name} এই হাসপাতালের চেম্বারে সফলভাবে যুক্ত হয়েছেন!`);
+      closeDoctorRegisterModal();
+      if (window.DocBD && window.DocBD.reloadDoctorsAndDirectory) {
+        window.DocBD.reloadDoctorsAndDirectory();
+      }
+      if (window.DocBD && window.DocBD.reloadHospitalAnalytics) {
+        window.DocBD.reloadHospitalAnalytics();
+      }
+    }
+  } catch (e) {
+    showToast(`নিবন্ধন ব্যর্থ: ${e.message}`, false);
+  }
+}
+
+// 6. Portal Access Switcher Modal
+export function openPortalSelectModal() {
+  const modal = document.getElementById('portal-select-modal');
+  if (modal) modal.classList.remove('hidden');
+}
+
+export function closePortalSelectModal() {
+  const modal = document.getElementById('portal-select-modal');
+  if (modal) modal.classList.add('hidden');
+}
 export function openBookingModal(docChamberId, doctors, onSelect) {
   const doc = doctors.find(d => (d.chamberId === docChamberId || d.id === docChamberId)) || doctors[0];
   if (doc && onSelect) onSelect(doc);

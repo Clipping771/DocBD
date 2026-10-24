@@ -13,6 +13,8 @@ import {
   fetchChamberState,
   fetchHospitalAnalytics,
   fetchTvSignage,
+  fetchHospitals,
+  fetchSuperMetrics,
   apiCallNext,
   apiBookSerial
 } from './services/apiService.js';
@@ -20,11 +22,16 @@ import {
 // Components
 import { 
   renderDoctorCards, 
+  renderHospitalCards,
   handleSearch, 
   applyFilter, 
   updatePatientLiveTicket,
   simulateVoiceSearch 
 } from './components/patientView.js';
+
+import { 
+  renderSuperAdminDashboard 
+} from './components/superAdminView.js';
 
 import { 
   renderCompounderTable 
@@ -59,6 +66,11 @@ import {
   openDoctorRegisterModal,
   closeDoctorRegisterModal,
   submitDoctorRegister,
+  openHospitalRegisterModal,
+  closeHospitalRegisterModal,
+  submitHospitalRegister,
+  openPortalSelectModal,
+  closePortalSelectModal,
   openVaultModal,
   closeVaultModal,
   searchPrescriptionVault,
@@ -78,10 +90,14 @@ import {
 // State
 let masterQueue = [];
 let loadedDoctors = [];
+let loadedHospitals = [];
+let selectedHospitalForAdmin = 'hosp-pop-dhanmondi';
+let selectedHospitalForFilter = 'all';
+let currentSuperMetrics = null;
 let currentChamberState = null;
 let currentAnalytics = null;
 let currentModeInfo = { mode: 'real', isDemo: false, isReal: true, label: 'লাইভ সিস্টেম' };
-let myBookedSerial = null; // No fake default serial
+let myBookedSerial = null;
 let activeChamberId = null;
 let selectedDoctorForBooking = null;
 let easyMode = false;
@@ -128,11 +144,33 @@ async function reloadSystemModeAndData() {
     currentModeInfo = modeRes;
     updateModeBadgeUI();
 
+    await reloadHospitals();
     await reloadDoctorsAndDirectory();
     await reloadActiveChamber();
     await reloadHospitalAnalytics();
+    await reloadSuperAdmin();
   } catch (e) {
     console.warn('Initial data load warning:', e.message);
+  }
+}
+
+async function reloadHospitals() {
+  try {
+    const res = await fetchHospitals();
+    loadedHospitals = res.hospitals || [];
+    renderHospitalCards(loadedHospitals);
+  } catch (e) {
+    console.error('Error fetching hospitals:', e);
+  }
+}
+
+async function reloadSuperAdmin() {
+  try {
+    const metrics = await fetchSuperMetrics();
+    currentSuperMetrics = metrics;
+    renderSuperAdminDashboard(metrics);
+  } catch (e) {
+    console.error('Error fetching super metrics:', e);
   }
 }
 
@@ -389,10 +427,11 @@ export async function submitWalkinSerial(name, phone, gender, fee) {
 // ===================================================================
 
 const ROLE_TITLES = {
-  patient: 'DocBD — রোগীর ওপিডি পোর্টাল',
+  patient: 'DocBD — বাংলাদেশের জাতীয় ওপিডি ও হাসপাতাল নেটওয়ার্ক',
   compounder: 'DocBD — সিরিয়াল খাতা ও রিসেপশন ডেস্ক',
   doctor: 'DocBD — ডাক্তার চেম্বার ও ডিজিটাল প্রেসক্রিপশন',
-  hospital: 'DocBD — হাসপাতাল ড্যাশবোর্ড ও অ্যানালিটিক্স',
+  hospital: 'DocBD — হাসপাতাল ওপিডি অ্যাডমিন কন্ট্রোল',
+  superadmin: 'DocBD — প্ল্যাটফর্ম সুপার অ্যাডমিন ড্যাশবোর্ড',
   tv: 'DocBD — লাইভ ওপিডি ওয়েটিং টিভি ডিসপ্লে',
   dual: 'DocBD — ডুয়াল ভিউ (রোগী + সিরিয়াল খাতা)'
 };
@@ -404,7 +443,11 @@ export function switchView(viewName, pushHash = true) {
   const compView = document.getElementById('compounder-view');
   const docView = document.getElementById('doctor-view');
   const hospView = document.getElementById('hospital-view');
+  const superView = document.getElementById('superadmin-view');
   const tvView = document.getElementById('tv-view');
+
+  // Close portal select modal if open
+  closePortalSelectModal();
 
   // Remove active from all tabs & view wrappers
   document.querySelectorAll('.switch-btn').forEach(btn => btn.classList.remove('active'));
@@ -428,7 +471,10 @@ export function switchView(viewName, pushHash = true) {
     docView.classList.add('view-active');
   } else if (norm === 'hospital' && hospView) {
     hospView.classList.add('view-active');
-    if (currentAnalytics) renderHospitalDashboard(currentAnalytics, currentModeInfo.isDemo);
+    if (currentAnalytics) renderHospitalDashboard(currentAnalytics, loadedHospitals, selectedHospitalForAdmin);
+  } else if (norm === 'superadmin' && superView) {
+    superView.classList.add('view-active');
+    reloadSuperAdmin();
   } else if (norm === 'tv' && tvView) {
     tvView.classList.add('view-active');
   }
@@ -452,10 +498,43 @@ export function switchView(viewName, pushHash = true) {
 function normalizeRole(role) {
   if (!role) return 'patient';
   const r = role.toLowerCase().replace(/^[/#]+/, '');
+  if (r === 'superadmin' || r === 'super-admin' || r === 'sa') return 'superadmin';
   if (r === 'serial' || r === 'reception') return 'compounder';
   if (r === 'admin') return 'hospital';
-  if (['patient', 'compounder', 'doctor', 'hospital', 'tv', 'dual'].includes(r)) return r;
+  if (['patient', 'compounder', 'doctor', 'hospital', 'superadmin', 'tv', 'dual'].includes(r)) return r;
   return 'patient';
+}
+
+function filterDoctorsByHospital(hospitalId) {
+  selectedHospitalForFilter = hospitalId;
+  const filtered = hospitalId === 'all' 
+    ? loadedDoctors 
+    : loadedDoctors.filter(d => d.hospitalId === hospitalId);
+  renderDoctorCards(filtered, (doc) => { selectedDoctorForBooking = doc; }, false);
+
+  document.querySelectorAll('.filter-pill-hosp').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-hosp') === hospitalId);
+  });
+
+  const docSection = document.getElementById('doctors-section');
+  if (docSection) docSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function manageHospitalAsAdmin(hospitalId) {
+  selectedHospitalForAdmin = hospitalId;
+  switchView('hospital');
+  renderHospitalDashboard(currentAnalytics, loadedHospitals, selectedHospitalForAdmin);
+}
+
+function switchHospitalAdmin(hospitalId) {
+  selectedHospitalForAdmin = hospitalId;
+  renderHospitalDashboard(currentAnalytics, loadedHospitals, selectedHospitalForAdmin);
+}
+
+function scrollToSection(sectionId) {
+  switchView('patient');
+  const elem = document.getElementById(sectionId);
+  if (elem) elem.scrollIntoView({ behavior: 'smooth' });
 }
 
 export function initRoleRouting() {
@@ -717,8 +796,19 @@ const globalHandlers = {
   markDoseTaken,
   downloadPrescriptionPdf,
 
-  // Hospital & Doctor Onboarding
-  openDoctorRegisterModal,
+  // Multi-Tenant Hospital & Super Admin
+  filterDoctorsByHospital,
+  manageHospitalAsAdmin,
+  switchHospitalAdmin,
+  scrollToSection,
+  openHospitalRegisterModal,
+  closeHospitalRegisterModal,
+  submitHospitalRegister,
+  openPortalSelectModal,
+  closePortalSelectModal,
+  reloadSuperAdmin,
+  reloadHospitals,
+  openDoctorRegisterModal: (hospId) => openDoctorRegisterModal(hospId || selectedHospitalForAdmin, loadedHospitals),
   closeDoctorRegisterModal,
   submitDoctorRegister,
   filterDept,

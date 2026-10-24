@@ -88,6 +88,40 @@ export function renderDoctorCards(docs, onSelect, isDemo = false) {
   });
 }
 
+export function renderHospitalCards(hospitals = [], onSelect) {
+  const container = document.getElementById('hospitals-grid-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  hospitals.forEach(h => {
+    const card = document.createElement('div');
+    card.className = 'hospital-card';
+    card.innerHTML = `
+      <div class="hosp-card-head">
+        <div class="hosp-badge-icon">🏥</div>
+        <div>
+          <h4>${h.name}</h4>
+          <span class="hosp-branch-text">${h.branch || 'ঢাকা'}</span>
+        </div>
+      </div>
+      <div class="hosp-meta-row">
+        <span class="hosp-dghs-badge">✓ ডিজিএইচএস: ${h.dghsRegNo || 'অনুমোদিত'}</span>
+        <span class="hosp-doc-count">${h.doctorCount || 1} জন বিশেষজ্ঞ</span>
+      </div>
+      <p class="hosp-address-text">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${h.address || 'ঢাকা'} • হটলাইন: ${h.contactPhone || '১৬২৬৩'}
+      </p>
+      <div class="hosp-action-footer">
+        <button class="btn-view-hosp-docs" onclick="window.DocBD.filterDoctorsByHospital('${h.id}')">
+          এই হাসপাতালের ডাক্তার দেখুন (${h.doctorCount || 1}) ➔
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
 export function handleSearch(query, doctors) {
   const q = query.trim().toLowerCase();
   const counter = document.getElementById('doctor-count');
@@ -99,7 +133,8 @@ export function handleSearch(query, doctors) {
   const filtered = doctors.filter(d => 
     d.name.toLowerCase().includes(q) || 
     d.spec.toLowerCase().includes(q) || 
-    d.hospital.toLowerCase().includes(q)
+    d.hospital.toLowerCase().includes(q) ||
+    (d.bmdc && d.bmdc.toLowerCase().includes(q))
   );
   renderDoctorCards(filtered);
   if (counter) counter.innerText = `${filtered.length} জন চেম্বারে উপলব্ধ`;
@@ -112,7 +147,7 @@ export function applyFilter(type, doctors) {
   if (type === 'all') {
     renderDoctorCards(doctors);
   } else if (type === 'cardiology') {
-    renderDoctorCards(doctors.filter(d => d.dept === 'cardiology' || d.spec.includes('হৃদরোগ')));
+    renderDoctorCards(doctors.filter(d => d.dept === 'cardiology' || d.spec.includes('হৃদরোগ') || d.spec.includes('মেডিসিন')));
   } else if (type === 'gynae') {
     renderDoctorCards(doctors.filter(d => d.dept === 'gynae' || d.spec.includes('স্ত্রী')));
   } else if (type === 'pediatrics') {

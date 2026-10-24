@@ -1,10 +1,10 @@
 const queueEngine = require('../services/queueEngine');
 
 async function doctorRoutes(fastify, options) {
-  // Get active doctors directory (dynamic from active storage)
+  // Get active doctors directory (dynamic from active storage, filterable by hospital)
   fastify.get('/api/doctors', async (request) => {
-    const { specialty, query } = request.query;
-    let list = queueEngine.getDoctorDirectory();
+    const { specialty, query, hospitalId } = request.query || {};
+    let list = queueEngine.getDoctorDirectory(hospitalId);
 
     if (specialty && specialty !== 'all') {
       const s = specialty.toLowerCase();

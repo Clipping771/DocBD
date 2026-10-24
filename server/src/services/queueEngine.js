@@ -10,6 +10,7 @@ class QueueEngine {
     // Operating Mode: default to real (clean database, no fake records)
     this.mode = process.env.DOCBD_MODE || 'real';
     
+    this.hospitals = new Map();
     this.chambers = new Map();
     this.wsClients = new Set();
     this.prescriptions = new Map(); // patientPhone / patientName -> Rx[]
@@ -61,16 +62,107 @@ class QueueEngine {
 
   _initModeData() {
     this._loadFromDisk();
-    if (this.chambers.size === 0) {
+    if (this.hospitals.size === 0 || this.chambers.size === 0) {
       this._initRealCleanData();
       this._saveToDisk();
     }
+  }
+
+  _getDefaultHospitals() {
+    return [
+      {
+        id: "hosp-pop-dhanmondi",
+        name: "পপুলার ডায়াগনস্টিক সেন্টার",
+        branch: "ধানমন্ডি শাখা (প্রধান কার্যালয়)",
+        dghsRegNo: "DGHS-DHK-PVT-08241",
+        division: "ঢাকা",
+        district: "ঢাকা",
+        thana: "ধানমন্ডি",
+        address: "বাড়ি ১৬, রোড ২, ধানমন্ডি, ঢাকা ১২০৫",
+        contactPhone: "09613-787801",
+        emergencyPhone: "01713-000001",
+        adminName: "মো. ফখরুল আলম",
+        adminEmail: "admin.popular@docbd.com",
+        adminPhone: "01711002233",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        status: "ACTIVE"
+      },
+      {
+        id: "hosp-square-panthapath",
+        name: "স্কয়ার হাসপাতাল",
+        branch: "পান্থপথ শাখা",
+        dghsRegNo: "DGHS-DHK-PVT-01923",
+        division: "ঢাকা",
+        district: "ঢাকা",
+        thana: "পান্থপথ",
+        address: "১৮/এফ, বীর উত্তম কাজী নুরুজ্জামান সড়ক, ঢাকা ১২০৫",
+        contactPhone: "10616",
+        emergencyPhone: "01713-377773",
+        adminName: "ডা. এ কে এম তারেক",
+        adminEmail: "admin.square@docbd.com",
+        adminPhone: "01711004455",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        status: "ACTIVE"
+      },
+      {
+        id: "hosp-ibnsina-dhanmondi",
+        name: "ইবনে সিনা ডায়াগনস্টিক সেন্টার",
+        branch: "ধানমন্ডি শাখা",
+        dghsRegNo: "DGHS-DHK-PVT-04182",
+        division: "ঢাকা",
+        district: "ঢাকা",
+        thana: "ধানমন্ডি",
+        address: "বাড়ি ৬৮, রোড ১৫, ধানমন্ডি, ঢাকা ১২০৯",
+        contactPhone: "09610-010615",
+        emergencyPhone: "01717-353535",
+        adminName: "সৈয়দ আরিফুর রহমান",
+        adminEmail: "admin.ibnsina@docbd.com",
+        adminPhone: "01711003344",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        status: "ACTIVE"
+      },
+      {
+        id: "hosp-labaid-dhanmondi",
+        name: "ল্যাবএইড স্পেশালাইজড হাসপাতাল",
+        branch: "ধানমন্ডি শাখা",
+        dghsRegNo: "DGHS-DHK-PVT-02811",
+        division: "ঢাকা",
+        district: "ঢাকা",
+        thana: "ধানমন্ডি",
+        address: "বাড়ি ১, রোড ৪, ধানমন্ডি, ঢাকা ১২০৫",
+        contactPhone: "10606",
+        emergencyPhone: "01766-662222",
+        adminName: "চৌধুরী ফাহিম আহমেদ",
+        adminEmail: "admin.labaid@docbd.com",
+        adminPhone: "01711005566",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        status: "ACTIVE"
+      },
+      {
+        id: "hosp-evercare-bashundhara",
+        name: "এভারকেয়ার হাসপাতাল",
+        branch: "বসুন্ধরা শাখা",
+        dghsRegNo: "DGHS-DHK-PVT-03319",
+        division: "ঢাকা",
+        district: "ঢাকা",
+        thana: "বসুন্ধরা",
+        address: "প্লট ৮১, ব্লক ই, বসুন্ধরা আ/এ, ঢাকা ১২২৯",
+        contactPhone: "10678",
+        emergencyPhone: "01714-000000",
+        adminName: "রেহনুমা তাসনিম",
+        adminEmail: "admin.evercare@docbd.com",
+        adminPhone: "01711006677",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        status: "ACTIVE"
+      }
+    ];
   }
 
   _getDefaultChambers() {
     return [
       {
         chamberId: "ch-pop-302",
+        hospitalId: "hosp-pop-dhanmondi",
         docId: "doc-rofiqul",
         bmdcRegNo: "A-28491",
         isDemo: false,
@@ -130,6 +222,7 @@ class QueueEngine {
       },
       {
         chamberId: "ch-ibn-201",
+        hospitalId: "hosp-ibnsina-dhanmondi",
         docId: "doc-nusrat",
         bmdcRegNo: "A-39102",
         isDemo: false,
@@ -175,6 +268,7 @@ class QueueEngine {
       },
       {
         chamberId: "ch-sq-opd3",
+        hospitalId: "hosp-square-panthapath",
         docId: "doc-sajjad",
         bmdcRegNo: "A-41820",
         isDemo: false,
@@ -209,6 +303,7 @@ class QueueEngine {
       },
       {
         chamberId: "ch-lab-405",
+        hospitalId: "hosp-labaid-dhanmondi",
         docId: "doc-hannan",
         bmdcRegNo: "A-19402",
         isDemo: false,
@@ -243,6 +338,7 @@ class QueueEngine {
       },
       {
         chamberId: "ch-evc-opd5",
+        hospitalId: "hosp-evercare-bashundhara",
         docId: "doc-farhana",
         bmdcRegNo: "A-44912",
         isDemo: false,
@@ -267,12 +363,16 @@ class QueueEngine {
   }
 
   _initRealCleanData() {
-    console.log('[DocBD DB] Initializing verified specialist doctors directory.');
+    console.log('[DocBD DB] Initializing multi-tenant hospitals and verified specialist doctors directory.');
+    this.hospitals = new Map();
     this.chambers = new Map();
     this.prescriptions = new Map();
     this.auditLogs = [];
-    const defaults = this._getDefaultChambers();
-    for (const ch of defaults) {
+    
+    for (const h of this._getDefaultHospitals()) {
+      this.hospitals.set(h.id, h);
+    }
+    for (const ch of this._getDefaultChambers()) {
       this.chambers.set(ch.chamberId, ch);
     }
   }
@@ -293,6 +393,18 @@ class QueueEngine {
       if (fs.existsSync(this.activeDbPath)) {
         const raw = fs.readFileSync(this.activeDbPath, 'utf8');
         const data = JSON.parse(raw);
+        
+        if (data && data.hospitals && Array.isArray(data.hospitals)) {
+          for (const h of data.hospitals) {
+            this.hospitals.set(h.id, h);
+          }
+        }
+        if (this.hospitals.size === 0) {
+          for (const h of this._getDefaultHospitals()) {
+            this.hospitals.set(h.id, h);
+          }
+        }
+
         if (data && data.chambers && Array.isArray(data.chambers)) {
           for (const ch of data.chambers) {
             this.chambers.set(ch.chamberId, ch);
@@ -305,7 +417,7 @@ class QueueEngine {
           if (Array.isArray(data.auditLogs)) {
             this.auditLogs = data.auditLogs;
           }
-          console.log(`[DocBD DB] Restored [${this.mode.toUpperCase()}] state from ${this.activeDbPath}`);
+          console.log(`[DocBD DB] Restored [${this.mode.toUpperCase()}] state (${this.hospitals.size} hospitals, ${this.chambers.size} chambers) from ${this.activeDbPath}`);
           return true;
         }
       }
@@ -317,11 +429,13 @@ class QueueEngine {
 
   _saveToDisk() {
     try {
+      const hospitalsArray = Array.from(this.hospitals.values());
       const chambersArray = Array.from(this.chambers.values());
       const prescriptionsObj = Object.fromEntries(this.prescriptions);
       const data = {
         updatedAt: new Date().toISOString(),
         mode: this.mode,
+        hospitals: hospitalsArray,
         chambers: chambersArray,
         prescriptions: prescriptionsObj,
         auditLogs: this.auditLogs.slice(-200) // keep last 200 logs
@@ -505,12 +619,172 @@ class QueueEngine {
     return newChamber;
   }
 
-  getDoctorDirectory() {
+  // --- MULTI-TENANT HOSPITAL & SUPER ADMIN METHODS ---
+
+  getHospitals() {
+    const list = [];
+    for (const h of this.hospitals.values()) {
+      const hospitalChambers = Array.from(this.chambers.values()).filter(c => c.hospitalId === h.id);
+      list.push({
+        ...h,
+        doctorCount: hospitalChambers.length,
+        totalQueueCount: hospitalChambers.reduce((sum, c) => sum + c.queue.length, 0),
+        activeDoctors: hospitalChambers.map(c => ({
+          chamberId: c.chamberId,
+          docName: c.docName,
+          specialty: c.specialty,
+          room: c.room,
+          fee: c.fee
+        }))
+      });
+    }
+    return list;
+  }
+
+  getHospitalById(id) {
+    const h = this.hospitals.get(id);
+    if (!h) return null;
+    const hospitalChambers = Array.from(this.chambers.values()).filter(c => c.hospitalId === id);
+    return {
+      ...h,
+      doctorCount: hospitalChambers.length,
+      chambers: hospitalChambers
+    };
+  }
+
+  // System Super Admin creates a Hospital and assigns its Hospital Admin
+  createHospital({ name, branch = '', dghsRegNo, division = 'ঢাকা', district = 'ঢাকা', thana = '', address, contactPhone, emergencyPhone = '16263', adminName, adminEmail, adminPhone }) {
+    if (!name || !dghsRegNo || !adminName || !adminEmail) {
+      throw new Error("হাসপাতালের নাম, ডিজিএইচএস রেজিস্ট্রেশন নম্বর এবং অ্যাডমিনের নাম ও ইমেইল আবশ্যক।");
+    }
+
+    const id = `hosp-${Date.now().toString(36)}`;
+    const newHospital = {
+      id,
+      name: name.trim(),
+      branch: branch ? branch.trim() : 'প্রধান শাখা',
+      dghsRegNo: dghsRegNo.trim(),
+      division,
+      district,
+      thana,
+      address: address ? address.trim() : 'ঢাকা',
+      contactPhone: contactPhone || '02-9999999',
+      emergencyPhone: emergencyPhone || '16263',
+      adminName: adminName.trim(),
+      adminEmail: adminEmail.trim(),
+      adminPhone: adminPhone || '',
+      createdAt: new Date().toISOString(),
+      status: 'ACTIVE'
+    };
+
+    this.hospitals.set(id, newHospital);
+    this.logAudit({
+      action: 'CREATE_HOSPITAL',
+      chamberId: 'SYSTEM',
+      userRole: 'SUPER_ADMIN',
+      details: `New Hospital [${newHospital.name}] created with Hospital Admin [${adminName} - ${adminEmail}].`
+    });
+
+    this._saveToDisk();
+    this.broadcastModeChange();
+    return newHospital;
+  }
+
+  // System Super Admin assigns or updates Hospital Admin
+  updateHospitalAdmin(hospitalId, { adminName, adminEmail, adminPhone }) {
+    const h = this.hospitals.get(hospitalId);
+    if (!h) throw new Error("হাসপাতাল পাওয়া যায়নি।");
+
+    if (adminName) h.adminName = adminName.trim();
+    if (adminEmail) h.adminEmail = adminEmail.trim();
+    if (adminPhone) h.adminPhone = adminPhone.trim();
+
+    this.logAudit({
+      action: 'UPDATE_HOSPITAL_ADMIN',
+      chamberId: hospitalId,
+      userRole: 'SUPER_ADMIN',
+      details: `Hospital Admin updated for [${h.name}]: ${h.adminName} (${h.adminEmail}).`
+    });
+
+    this._saveToDisk();
+    this.broadcastModeChange();
+    return h;
+  }
+
+  // Hospital Admin onboards a doctor specifically for their hospital
+  addDoctorToHospital(hospitalId, { name, bmdcRegNo, degrees, specialty, roomNumber, fee, followupFee, schedules }) {
+    const hospital = this.hospitals.get(hospitalId);
+    if (!hospital) {
+      throw new Error("নির্ধারিত হাসপাতাল পাওয়া যায়নি। অনুগ্রহ করে সঠিক হাসপাতাল নির্বাচন করুন।");
+    }
+    if (!name || !bmdcRegNo || !specialty) {
+      throw new Error("ডাক্তারের নাম, বিএমডিসি রেজিস্ট্রেশন নম্বর এবং স্পেশালিটি আবশ্যক।");
+    }
+
+    const docId = `doc-${Date.now().toString(36)}`;
+    const chamberId = `ch-${hospitalId.replace('hosp-', '')}-${Math.random().toString(36).substr(2, 4)}`;
+
+    const newChamber = {
+      chamberId,
+      hospitalId,
+      hospitalName: `${hospital.name}${hospital.branch ? ', ' + hospital.branch : ''}`,
+      docId,
+      bmdcRegNo: bmdcRegNo.trim(),
+      isDemo: false,
+      docName: name.trim(),
+      degree: degrees ? degrees.trim() : "MBBS",
+      specialty: specialty.trim(),
+      room: roomNumber ? roomNumber.trim() : "ওপিডি কক্ষ ১",
+      currentInsideSerial: null,
+      avgMinutesPerPatient: 10,
+      fee: Number(fee) || 800,
+      followupFee: Number(followupFee) || 500,
+      rating: "৪.৯ (১২০+ রিভিউ)",
+      schedules: schedules && schedules.length > 0 ? schedules : [
+        { day: "প্রতিদিন", time: "সন্ধ্যা ৬:০০ - রাত ৯:০০" }
+      ],
+      queue: []
+    };
+
+    this.chambers.set(chamberId, newChamber);
+    this.logAudit({
+      action: 'ONBOARD_HOSPITAL_DOCTOR',
+      chamberId,
+      userRole: 'HOSPITAL_ADMIN',
+      details: `Doctor [${name}] onboarded to Hospital [${hospital.name}] by Admin [${hospital.adminName}].`
+    });
+
+    this._saveToDisk();
+    this.broadcastModeChange();
+    return newChamber;
+  }
+
+  getSuperAdminMetrics() {
+    const totalQueues = Array.from(this.chambers.values()).reduce((sum, c) => sum + c.queue.length, 0);
+    const totalCompleted = Array.from(this.chambers.values()).reduce((sum, c) => sum + c.queue.filter(p => p.status === 'done').length, 0);
+    const totalRevenue = Array.from(this.chambers.values()).reduce((sum, c) => sum + c.queue.filter(p => p.paid).reduce((s, p) => s + (p.fee || 0), 0), 0);
+
+    return {
+      totalHospitals: this.hospitals.size,
+      totalHospitalAdmins: Array.from(this.hospitals.values()).filter(h => h.adminEmail).length,
+      totalDoctors: this.chambers.size,
+      totalQueues,
+      totalCompleted,
+      totalRevenue,
+      hospitals: this.getHospitals()
+    };
+  }
+
+  getDoctorDirectory(filterHospitalId = null) {
     const list = [];
     for (const ch of this.chambers.values()) {
+      if (filterHospitalId && filterHospitalId !== 'all' && ch.hospitalId !== filterHospitalId) {
+        continue;
+      }
       list.push({
         id: ch.docId,
         chamberId: ch.chamberId,
+        hospitalId: ch.hospitalId || 'hosp-pop-dhanmondi',
         name: ch.docName,
         degree: ch.degree,
         spec: ch.specialty,

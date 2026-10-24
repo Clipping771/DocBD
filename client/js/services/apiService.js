@@ -25,11 +25,59 @@ export async function fetchSystemStatus() {
   return res.json();
 }
 
-export async function fetchDoctors(specialty = 'all', query = '') {
+export async function fetchDoctors(specialty = 'all', query = '', hospitalId = 'all') {
   let url = `${API_BASE}/api/doctors?`;
   if (specialty && specialty !== 'all') url += `specialty=${encodeURIComponent(specialty)}&`;
   if (query) url += `query=${encodeURIComponent(query)}&`;
+  if (hospitalId && hospitalId !== 'all') url += `hospitalId=${encodeURIComponent(hospitalId)}&`;
   const res = await fetch(url);
+  return res.json();
+}
+
+export async function fetchHospitals() {
+  const res = await fetch(`${API_BASE}/api/hospitals`);
+  return res.json();
+}
+
+export async function fetchHospitalDetails(hospitalId) {
+  const res = await fetch(`${API_BASE}/api/hospitals/${encodeURIComponent(hospitalId)}`);
+  return res.json();
+}
+
+export async function fetchHospitalDoctors(hospitalId) {
+  const res = await fetch(`${API_BASE}/api/hospitals/${encodeURIComponent(hospitalId)}/doctors`);
+  return res.json();
+}
+
+export async function apiAddHospitalDoctor(hospitalId, data) {
+  const res = await fetch(`${API_BASE}/api/hospitals/${encodeURIComponent(hospitalId)}/doctors`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function apiCreateHospital(data) {
+  const res = await fetch(`${API_BASE}/api/system/hospitals`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function apiUpdateHospitalAdmin(data) {
+  const res = await fetch(`${API_BASE}/api/system/hospital-admins`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function fetchSuperMetrics() {
+  const res = await fetch(`${API_BASE}/api/system/super-metrics`);
   return res.json();
 }
 
