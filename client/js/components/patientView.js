@@ -9,19 +9,21 @@ export function renderDoctorCards(docs, onSelect, isDemo = false) {
   container.innerHTML = '';
 
   if (!docs || docs.length === 0) {
-    if (countElem) countElem.innerText = '০ জন উপলব্ধ';
+    if (countElem) countElem.innerText = '০ জন চেম্বারে';
     container.innerHTML = `
-      <div class="empty-state-box">
-        <svg class="empty-icon" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6">
+      <div class="empty-state-box" style="padding: 32px 16px; text-align: center; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; margin: 12px 0;">
+        <svg class="empty-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#94a3b8" stroke-width="1.6" style="margin-bottom: 10px;">
           <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
           <line x1="19" y1="8" x2="19" y2="14"></line>
           <line x1="22" y1="11" x2="16" y2="11"></line>
         </svg>
-        <h4>কোনো ডাক্তার তালিকাভুক্ত নেই</h4>
-        <p>রিয়েল হাসপাতাল মোডে কোনো কাল্পনিক ডাক্তার তৈরি করা হয় না। হাসপাতাল প্রশাসন থেকে ডাক্তার ও চেম্বার নিবন্ধন করা হলে এখানে প্রদর্শিত হবে।</p>
-        <button class="btn-demo-switch" onclick="window.DocBD.toggleSystemMode()">
-          কাল্পনিক ডেটা দেখতে ডেমো মোডে যান
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">কোনো ডাক্তার এখনও যুক্ত করা হয়নি</h4>
+        <p style="font-size: 0.85rem; color: #64748b; max-width: 380px; margin: 0 auto 16px; line-height: 1.5;">
+          আপনি নিজের ডাক্তার ও চেম্বার তৈরি করে সম্পূর্ণ সিস্টেম নিজের মতো পরিচালনা করতে পারেন।
+        </p>
+        <button class="btn-primary" onclick="openDoctorRegisterModal()" style="padding: 10px 20px; font-size: 0.875rem; font-weight: 700; border-radius: 8px; background: var(--primary); color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);">
+          + নতুন ডাক্তার ও চেম্বার তৈরি করুন
         </button>
       </div>
     `;

@@ -7,8 +7,8 @@ class QueueEngine {
     this.demoDbFilePath = path.join(__dirname, '../data/demo_store.json');
     this.realDbFilePath = path.join(__dirname, '../data/real_store.json');
     
-    // Operating Mode: 'demo' or 'real'
-    this.mode = process.env.DOCBD_MODE || 'demo';
+    // Operating Mode: default to real (clean database, no fake records)
+    this.mode = process.env.DOCBD_MODE || 'real';
     
     this.chambers = new Map();
     this.wsClients = new Set();
@@ -27,7 +27,7 @@ class QueueEngine {
       mode: this.mode,
       isDemo: this.mode === 'demo',
       isReal: this.mode === 'real',
-      label: this.mode === 'demo' ? 'ডেমো মোড (কাল্পনিক ডেটা)' : 'রিয়েল হাসপাতাল মোড (প্রকৃত ডেটা)',
+      label: this.mode === 'real' ? 'লাইভ সিস্টেম (প্রকৃত ডেটা)' : 'টেস্টিং মোড',
       totalChambers: this.chambers.size,
       activeStorage: path.basename(this.activeDbPath)
     };
@@ -61,18 +61,13 @@ class QueueEngine {
 
   _initModeData() {
     if (!this._loadFromDisk()) {
-      if (this.mode === 'demo') {
-        this._initDemoData();
-      } else {
-        // Real mode: starts completely clean!
-        this._initRealCleanData();
-      }
+      this._initRealCleanData();
       this._saveToDisk();
     }
   }
 
   _initRealCleanData() {
-    console.log('[DocBD DB] Initializing clean Real Hospital database (0 fabricated records).');
+    console.log('[DocBD DB] Initializing clean database (0 fabricated records).');
     this.chambers = new Map();
     this.prescriptions = new Map();
     this.auditLogs = [];
@@ -91,11 +86,10 @@ class QueueEngine {
         auditLogs: []
       };
       fs.writeFileSync(this.realDbFilePath, JSON.stringify(data, null, 2), 'utf8');
-      if (this.mode === 'real') {
-        this.broadcastModeChange();
-      }
+      fs.writeFileSync(this.demoDbFilePath, JSON.stringify(data, null, 2), 'utf8');
+      this.broadcastModeChange();
     } catch (e) {
-      console.error('Reset real data error:', e);
+      console.error('Reset data error:', e);
     }
   }
 
@@ -105,10 +99,6 @@ class QueueEngine {
         const raw = fs.readFileSync(this.activeDbPath, 'utf8');
         const data = JSON.parse(raw);
         if (data && data.chambers && Array.isArray(data.chambers)) {
-          if (this.mode === 'demo' && data.chambers.length === 0) {
-            // Demo mode should always retain fictional seed doctors
-            return false;
-          }
           for (const ch of data.chambers) {
             this.chambers.set(ch.chamberId, ch);
           }

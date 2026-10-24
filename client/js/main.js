@@ -80,9 +80,9 @@ let masterQueue = [];
 let loadedDoctors = [];
 let currentChamberState = null;
 let currentAnalytics = null;
-let currentModeInfo = { mode: 'demo', isDemo: true, label: 'ডেমো মোড' };
-let myBookedSerial = null; // No fake default serial in real system
-let activeChamberId = 'ch-pop-302';
+let currentModeInfo = { mode: 'real', isDemo: false, isReal: true, label: 'লাইভ সিস্টেম' };
+let myBookedSerial = null; // No fake default serial
+let activeChamberId = null;
 let selectedDoctorForBooking = null;
 let easyMode = false;
 let currentLanguage = 'bn';
@@ -90,7 +90,7 @@ let currentLanguage = 'bn';
 document.addEventListener('DOMContentLoaded', async () => {
   // 1. Initial State from Storage
   const backup = loadLocalBackup();
-  if (backup.mySerial && backup.mySerial !== 12) {
+  if (backup.mySerial && backup.mySerial !== 12 && backup.mySerial !== 5) {
     myBookedSerial = backup.mySerial;
   } else {
     myBookedSerial = null;
@@ -140,13 +140,26 @@ async function reloadDoctorsAndDirectory() {
   try {
     const docRes = await fetchDoctors();
     loadedDoctors = docRes.doctors || [];
-    renderDoctorCards(loadedDoctors, (doc) => { selectedDoctorForBooking = doc; }, currentModeInfo.isDemo);
+    if (loadedDoctors.length > 0 && !activeChamberId) {
+      activeChamberId = loadedDoctors[0].chamberId || loadedDoctors[0].id;
+    } else if (loadedDoctors.length === 0) {
+      activeChamberId = null;
+      currentChamberState = null;
+      masterQueue = [];
+    }
+    renderDoctorCards(loadedDoctors, (doc) => { selectedDoctorForBooking = doc; }, false);
   } catch (e) {
     console.error('Error fetching doctors:', e);
   }
 }
 
 async function reloadActiveChamber() {
+  if (!activeChamberId) {
+    currentChamberState = null;
+    masterQueue = [];
+    syncAllViews();
+    return;
+  }
   try {
     const state = await fetchChamberState(activeChamberId);
     if (state && !state.isEmptyState) {

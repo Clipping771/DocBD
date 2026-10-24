@@ -64,6 +64,12 @@
   padding: 0;
 }
 
+html {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-family);
   background: var(--bg-app);
@@ -71,6 +77,9 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* ===================================================================
@@ -83,11 +92,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   background: var(--bg-card);
-  padding: 10px 24px;
+  padding: 8px 18px;
   border-bottom: 1px solid var(--border-light);
   box-shadow: var(--shadow-xs);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .logo-group {
@@ -270,25 +281,32 @@ body {
    MAIN WORKSPACE & LAYOUT
    =================================================================== */
 .app-workspace {
-  padding: 24px;
-  max-width: 1560px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 1480px;
   margin: 0 auto;
   min-height: calc(100vh - 65px);
+  box-sizing: border-box;
 }
 
 .device-frame-wrapper {
   display: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .device-frame-wrapper.view-active {
   display: block;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Dual Mode */
 .app-workspace.dual-mode {
   display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(340px, 460px) 1fr;
+  gap: 20px;
   align-items: start;
 }
 
@@ -297,18 +315,27 @@ body {
   display: block !important;
 }
 
+.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 10px;
+}
+
 /* ===================================================================
    VIEW 1: PATIENT MOBILE APP FRAME
    =================================================================== */
 .phone-frame {
-  max-width: 580px;
+  max-width: 620px;
   width: 100%;
   margin: 0 auto;
   background: #ffffff;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
   overflow: hidden;
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -2483,5 +2510,27 @@ body {
   }
   .compounder-desk-frame, .doctor-portal-frame, .hospital-dashboard-frame {
     padding: 14px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .doc-consult-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .tv-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .queue-monitor-box {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .queue-divider {
+    display: none !important;
   }
 }

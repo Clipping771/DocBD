@@ -135,7 +135,11 @@ export async function submitDoctorRegister() {
       playBeepSound();
       showToast(`ডা. ${name} ও নতুন চেম্বার সফলভাবে নিবন্ধিত হয়েছে!`);
       closeDoctorRegisterModal();
-      window.DocBD.reloadDoctorsAndDirectory();
+      if (res.doctor && res.doctor.chamberId && window.DocBD && window.DocBD.switchChamber) {
+        window.DocBD.switchChamber(res.doctor.chamberId);
+      } else if (window.DocBD && window.DocBD.reloadDoctorsAndDirectory) {
+        window.DocBD.reloadDoctorsAndDirectory();
+      }
     }
   } catch (e) {
     showToast(`নিবন্ধন ব্যর্থ: ${e.message}`, false);

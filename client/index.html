@@ -57,27 +57,18 @@
 
     <!-- Right Controls -->
     <div class="nav-right">
-      <div class="mode-badge-wrap">
-        <span id="system-mode-badge" class="mode-badge mode-demo">
-          <span class="mode-dot"></span>
-          <span id="system-mode-text">ডেমো মোড (কাল্পনিক ডেটা)</span>
-        </span>
-        <button id="btn-mode-toggle" class="btn-mode-toggle" onclick="window.DocBD.toggleSystemMode()">
-          মোড পরিবর্তন
-        </button>
-      </div>
-      <button id="btn-emergency" class="btn-emergency-top" onclick="window.DocBD.openEmergencyModal()">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        জরুরি সেবা (৯৯৯ / ১৬২৬৩)
+      <button class="btn-comp-action btn-primary" onclick="openDoctorRegisterModal()" style="padding:6px 12px; font-size:0.8rem; font-weight:700; white-space:nowrap;">
+        + নতুন ডাক্তার
       </button>
-      <button id="lang-toggle-btn" class="btn-lang-toggle" onclick="window.DocBD.toggleLanguage()">
+      <button id="btn-emergency" class="btn-emergency-top" onclick="openEmergencyModal()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        জরুরি সেবা
+      </button>
+      <button id="lang-toggle-btn" class="btn-lang-toggle" onclick="toggleLanguage()">
         English
       </button>
-      <button id="easy-mode-toggle" class="btn-easy-toggle" onclick="window.DocBD.toggleEasyMode()">
-        সহজ মোড
-      </button>
       <div class="live-indicator status-online">
-        <span class="pulse-dot connected"></span> ক্লাউড সিঙ্ক সক্রিয়
+        <span class="pulse-dot connected"></span> লাইভ
       </div>
     </div>
   </header>
@@ -138,22 +129,22 @@
           <div class="live-ticket-card" id="patient-live-ticket">
             <div class="ticket-header">
               <div class="ticket-status-badge">
-                <span class="blink-dot"></span> চেম্বার চলমান
+                <span class="blink-dot"></span> <span id="ticket-status-label">লাইভ ওপিডি কিউ</span>
               </div>
-              <span class="chamber-name">পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি</span>
+              <span class="chamber-name" id="ticket-chamber-name">চেম্বার প্রস্তুত</span>
             </div>
             
             <div class="ticket-doc-info">
               <div>
-                <h4 id="ticket-doc-name">অধ্যাপক ডা. মো. রফিকুল ইসলাম</h4>
-                <p id="ticket-doc-spec">হৃদরোগ ও মেডিসিন বিশেষজ্ঞ (BMDC Reg: A-28491)</p>
+                <h4 id="ticket-doc-name">কোনো সক্রিয় সিরিয়াল বুকিং নেই</h4>
+                <p id="ticket-doc-spec">নিচের তালিকা থেকে ডাক্তার বেছে সিরিয়াল নিন অথবা নতুন ডাক্তার তৈরি করুন</p>
               </div>
             </div>
 
             <div class="queue-monitor-box">
               <div class="queue-col now-in">
                 <span class="q-label">বর্তমানে ভেতরে</span>
-                <span class="q-val" id="patient-current-inside">৫</span>
+                <span class="q-val" id="patient-current-inside">—</span>
                 <small>সিরিয়াল নম্বর</small>
               </div>
               <div class="queue-divider">➔</div>
@@ -171,12 +162,12 @@
             </div>
 
             <!-- Proximity Check-in Prompt -->
-            <div class="proximity-alert" id="proximity-checkin-box">
+            <div class="proximity-alert hidden" id="proximity-checkin-box">
               <div class="prox-icon">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <div class="prox-text">
-                <strong>আপনি পপুলার ডায়াগনস্টিক সেন্টারের ২০০ মিটারের মধ্যে আছেন</strong>
+                <strong>আপনি চেম্বারের সন্নিকটে আছেন</strong>
                 <p>উপস্থিতি নিশ্চিত করতে রিসেপশনকে জানান</p>
               </div>
               <button id="btn-self-checkin" class="btn-checkin" onclick="confirmPatientCheckin()">
@@ -189,9 +180,14 @@
           </div>
 
           <!-- Doctors Directory List -->
-          <div class="section-title">
-            <h3>উপলব্ধ বিশেষজ্ঞ চিকিৎসক ও চেম্বার</h3>
-            <span class="result-count" id="doctor-count">৪ জন আজ চেম্বারে</span>
+          <div class="section-title" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div>
+              <h3>উপলব্ধ বিশেষজ্ঞ চিকিৎসক ও চেম্বার</h3>
+              <span class="result-count" id="doctor-count">০ জন চেম্বারে</span>
+            </div>
+            <button class="btn-comp-action btn-primary" onclick="openDoctorRegisterModal()" style="padding:6px 12px; font-size:0.8rem; font-weight:700;">
+              + নতুন ডাক্তার যোগ করুন
+            </button>
           </div>
 
           <div class="doctor-list" id="doctor-list-container">
@@ -226,15 +222,18 @@
       <div class="compounder-desk-frame">
         <div class="comp-desk-header">
           <div>
-            <h2>কক্ষ ৩০২ — চেম্বার সিরিয়াল রেজিস্টার</h2>
-            <p>অধ্যাপক ডা. মো. রফিকুল ইসলাম (হৃদরোগ বিশেষজ্ঞ) • পপুলার ডায়াগনস্টিক, ধানমন্ডি</p>
+            <h2 id="comp-desk-title">চেম্বার সিরিয়াল রেজিস্টার</h2>
+            <p id="comp-desk-subtitle">রিয়েল-টাইম পেশেন্ট কিউ ও ভিজিট ট্র্যাকিং ডেস্ক</p>
           </div>
-          <div class="comp-header-actions">
+          <div class="comp-header-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn-comp-action btn-primary" onclick="openDoctorRegisterModal()">
+              + নতুন ডাক্তার / চেম্বার
+            </button>
             <button class="btn-comp-action btn-primary" onclick="openWalkinModal()">
-              + ওয়াক-ইন / ফোন বুকিং
+              + ওয়াক-ইন সিরিয়াল
             </button>
             <button class="btn-comp-action btn-danger-soft" onclick="broadcastDoctorDelay()">
-              বিলম্বের SMS ব্রডকাস্ট (৩০ মিনিট)
+              বিলম্বের SMS ব্রডকাস্ট
             </button>
           </div>
         </div>
@@ -243,7 +242,7 @@
         <div class="comp-focus-banner">
           <div class="current-inside-box">
             <span class="focus-label">বর্তমানে পরামর্শ নিচ্ছেন:</span>
-            <strong class="focus-patient-name" id="comp-inside-patient">সিরিয়াল ৫: সুফিয়া বেগম</strong>
+            <strong class="focus-patient-name" id="comp-inside-patient">চেম্বার প্রস্তুত (রোগী অপেক্ষমাণ নেই)</strong>
           </div>
           <div class="comp-primary-actions">
             <button class="btn-call-next" onclick="callNextPatient()">
@@ -260,25 +259,25 @@
               ✕ অনুপস্থিত
             </button>
           </div>
-          <div class="next-caller-badge" id="next-caller-hint">সিরিয়াল ৬ প্রস্তুত করুন</div>
+          <div class="next-caller-badge" id="next-caller-hint">কোনো অপেক্ষমাণ রোগী নেই</div>
         </div>
 
         <!-- Real-time Stats Cards -->
         <div class="comp-stats-grid">
           <div class="stat-card">
-            <span class="stat-num" id="stat-total">১৫</span>
+            <span class="stat-num" id="stat-total">০</span>
             <span class="stat-lbl">মোট সিরিয়াল</span>
           </div>
           <div class="stat-card">
-            <span class="stat-num text-green" id="stat-done">৪</span>
+            <span class="stat-num text-green" id="stat-done">০</span>
             <span class="stat-lbl">ভিজিট সম্পন্ন</span>
           </div>
           <div class="stat-card">
-            <span class="stat-num text-accent" id="stat-waiting">১০</span>
+            <span class="stat-num text-accent" id="stat-waiting">০</span>
             <span class="stat-lbl">অপেক্ষমাণ রোগী</span>
           </div>
           <div class="stat-card">
-            <span class="stat-num text-blue" id="stat-checkedin">৯</span>
+            <span class="stat-num text-blue" id="stat-checkedin">০</span>
             <span class="stat-lbl">ক্লিনিকে উপস্থিত</span>
           </div>
           <div class="stat-card">
@@ -315,10 +314,10 @@
         <div class="doc-portal-header">
           <div>
             <h2>ডাক্তার কনসালটেশন ও ই-প্রেসক্রিপশন পোর্টাল</h2>
-            <p>অধ্যাপক ডা. মো. রফিকুল ইসলাম • কক্ষ ৩০২ (পপুলার ধানমন্ডি) • BMDC Reg: A-28491</p>
+            <p id="doc-portal-info">ডিজিটাল রোগী সেবা, ইএমআর ও প্রেসক্রিপশন জেনারেশন</p>
           </div>
           <div class="doc-portal-actions">
-            <span class="live-status-pill">● কনসালটেশন চলমান</span>
+            <span class="live-status-pill">● কনসালটেশন প্রস্তুত</span>
             <button class="btn-comp-action btn-primary" onclick="startVideoCall()">
               ভিডিও কল পরামর্শ
             </button>
@@ -330,46 +329,44 @@
           <div class="patient-vitals-pane">
             <div class="pane-header">
               <h4>বর্তমানে চেম্বারে উপস্থিত রোগী:</h4>
-              <strong id="doc-patient-name" class="active-patient-badge">সুফিয়া বেগম (সিরিয়াল #৫)</strong>
+              <strong id="doc-patient-name" class="active-patient-badge empty">চেম্বার প্রস্তুত (রোগী অপেক্ষমাণ নেই)</strong>
             </div>
 
             <!-- Vitals Grid -->
             <div class="vitals-grid">
               <div class="vital-item">
                 <span class="v-label">ব্লাড প্রেসার</span>
-                <span class="v-val text-red">১৩৫/৮৫</span>
+                <span class="v-val text-red" id="vital-bp-display">—</span>
                 <small>mmHg</small>
               </div>
               <div class="vital-item">
                 <span class="v-label">পালস রেট</span>
-                <span class="v-val text-green">৭৮</span>
+                <span class="v-val text-green" id="vital-pulse-display">—</span>
                 <small>bpm</small>
               </div>
               <div class="vital-item">
                 <span class="v-label">SpO2 লেভেল</span>
-                <span class="v-val text-blue">৯৮%</span>
-                <small>স্বাভাবিক</small>
+                <span class="v-val text-blue" id="vital-spo2-display">—</span>
+                <small>%</small>
               </div>
               <div class="vital-item">
-                <span class="v-label">র‍্যান্ডম সুগার</span>
-                <span class="v-val">৭.২</span>
-                <small>mmol/L</small>
+                <span class="v-label">তাপমাত্রা / ওজন</span>
+                <span class="v-val" id="vital-temp-display">—</span>
+                <small>Temp / Wt</small>
               </div>
             </div>
 
             <!-- Clinical Complaints -->
             <div class="complaints-box">
               <label>প্রধান সমস্যা ও ক্লিনিকাল হিস্ট্রি:</label>
-              <div class="complaint-chips">
-                <span class="chip">বুক ধড়ফড় (৩ দিন)</span>
-                <span class="chip">সিঁড়ি বেয়ে ওঠার সময় শ্বাসকষ্ট</span>
-                <span class="chip">পূর্ববর্তী ডায়াবেটিস ও হাইপারটেনশন</span>
+              <div class="complaint-chips" id="complaints-chips-box">
+                <span class="chip" style="color:#64748b; background:#f1f5f9;">রোগী চেম্বারে প্রবেশ করলে হিস্ট্রি লোড হবে</span>
               </div>
             </div>
 
             <div class="form-group" style="margin-top:14px;">
               <label>ক্লিনিকাল ডায়াগনসিস (Diagnosis)</label>
-              <input type="text" id="rx-diagnosis" value="Essential Hypertension & Mild Angina Pectoris">
+              <input type="text" id="rx-diagnosis" placeholder="রোগ নির্ণয় / ডায়াগনসিস লিখুন...">
             </div>
           </div>
 
@@ -385,11 +382,11 @@
                 <label>ঔষধ নির্বাচন ও ডোজ নির্ধারণ</label>
                 <div class="drug-select-row">
                   <select id="rx-med-select" class="rx-select-lg">
-                    <option value="Tab. Bizoran 5/20 mg">Tab. Bizoran 5/20 mg (Amlodipine + Olmesartan)</option>
+                    <option value="Tab. Napa 500 mg">Tab. Napa 500 mg (Paracetamol)</option>
                     <option value="Cap. Seclo 20 mg">Cap. Seclo 20 mg (Omeprazole)</option>
-                    <option value="Tab. Napa Extra 500/65 mg">Tab. Napa Extra (Paracetamol + Caffeine)</option>
-                    <option value="Tab. Rosuva 10 mg">Tab. Rosuva 10 mg (Rosuvastatin)</option>
-                    <option value="Tab. Anxit 0.5 mg">Tab. Anxit 0.5 mg (Alprazolam)</option>
+                    <option value="Tab. Bizoran 5/20 mg">Tab. Bizoran 5/20 mg</option>
+                    <option value="Tab. Rosuva 10 mg">Tab. Rosuva 10 mg</option>
+                    <option value="Syp. Tofen 100 ml">Syp. Tofen 100 ml</option>
                   </select>
                   <div class="dose-row">
                     <select id="rx-dose-select" class="rx-select-sm">
@@ -412,41 +409,21 @@
               <div class="prescribed-meds-box">
                 <label style="font-size:0.8rem; font-weight:600; color:#475569;">প্রেসক্রিপশনে অন্তর্ভুক্ত ওষুধসমূহ:</label>
                 <ul id="prescribed-med-list" class="prescribed-med-list">
-                  <li class="rx-med-item">
-                    <div class="rx-med-info">
-                      <strong>Tab. Bizoran 5/20 mg</strong>
-                      <span>১+০+০ (সকালে খাওয়ার পর) • ৩০ দিন</span>
-                    </div>
-                    <button class="btn-del-rx" onclick="removeMed(this)">✕</button>
-                  </li>
-                  <li class="rx-med-item">
-                    <div class="rx-med-info">
-                      <strong>Cap. Seclo 20 mg</strong>
-                      <span>১+০+১ (খাওয়ার ৩০ মিনিট আগে) • ৩০ দিন</span>
-                    </div>
-                    <button class="btn-del-rx" onclick="removeMed(this)">✕</button>
-                  </li>
-                  <li class="rx-med-item">
-                    <div class="rx-med-info">
-                      <strong>Tab. Napa Extra</strong>
-                      <span>প্রয়োজন হলে ১টি ভরা পেটে</span>
-                    </div>
-                    <button class="btn-del-rx" onclick="removeMed(this)">✕</button>
-                  </li>
+                  <li style="padding:12px; text-align:center; color:#64748b; font-size:0.85rem;">প্রেসক্রিপশনে এখনও কোনো ওষুধ যোগ করা হয়নি</li>
                 </ul>
               </div>
 
               <!-- Diagnostic Tests Advised -->
               <div class="form-group" style="margin-top:12px;">
                 <label>পরামর্শকৃত টেস্ট ও ইনভেস্টিগেশন</label>
-                <input type="text" id="rx-tests" value="ECG (12-Lead), Serum Creatinine, Echocardiography">
+                <input type="text" id="rx-tests" placeholder="প্রয়োজনীয় টেস্টসমূহ (যেমন: CBC, RBS, ECG)...">
               </div>
 
               <!-- Follow-up Recall Setting -->
               <div class="form-group">
                 <label>পরবর্তী ফলো-আপ তারিখ (স্বয়ংক্রিয় SMS স্মরণবার্তা)</label>
                 <div class="followup-input-group">
-                  <input type="date" id="rx-followup-date" value="2026-10-30">
+                  <input type="date" id="rx-followup-date">
                   <small style="color:#0f766e;">(রোগীর মোবাইলে ৭ দিন পূর্বে স্বয়ংক্রিয় SMS রিমাইন্ডার যাবে)</small>
                 </div>
               </div>
@@ -581,9 +558,9 @@
           <!-- Big Left: Inside Now -->
           <div class="tv-now-serving-box">
             <div class="tv-box-title">বর্তমানে চেম্বারে উপস্থিত</div>
-            <div class="tv-big-token" id="tv-current-serial">৫</div>
-            <div class="tv-patient-call-name" id="tv-current-name">সুফিয়া বেগম</div>
-            <div class="tv-serving-status">পরামর্শ চলছে...</div>
+            <div class="tv-big-token" id="tv-current-serial">—</div>
+            <div class="tv-patient-call-name" id="tv-current-name">চেম্বার প্রস্তুত</div>
+            <div class="tv-serving-status">অপেক্ষমাণ রোগী নেই</div>
           </div>
 
           <!-- Right: Upcoming Queue -->
@@ -613,8 +590,8 @@
       </div>
       <div class="modal-body">
         <div class="modal-doctor-summary">
-          <strong id="bm-doc-name">অধ্যাপক ডা. মো. রফিকুল ইসলাম</strong>
-          <p id="bm-doc-chamber">পপুলার ডায়াগনস্টিক, ধানমন্ডি • চেম্বার সময়: সন্ধ্যা ৭:০০ - রাত ১০:০০</p>
+          <strong id="bm-doc-name">ডাক্তারের নাম</strong>
+          <p id="bm-doc-chamber">চেম্বার তথ্য</p>
         </div>
 
         <div class="form-group">
