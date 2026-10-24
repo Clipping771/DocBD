@@ -113,7 +113,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 4. Initial Sync with Backend
   await reloadSystemModeAndData();
 
-  // 5. Register PWA Service Worker
+  // 5. Initialize Role & URL Routing
+  initRoleRouting();
+
+  // 6. Register PWA Service Worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
@@ -368,22 +371,102 @@ export async function submitWalkinSerial(name, phone, gender, fee) {
   }
 }
 
-export function switchView(viewName) {
+// ===================================================================
+// ROLE-BASED NAVIGATION & DYNAMIC ROUTING
+// ===================================================================
+
+const ROLE_TITLES = {
+  patient: 'DocBD — রোগীর ওপিডি পোর্টাল',
+  compounder: 'DocBD — সিরিয়াল খাতা ও রিসেপশন ডেস্ক',
+  doctor: 'DocBD — ডাক্তার চেম্বার ও ডিজিটাল প্রেসক্রিপশন',
+  hospital: 'DocBD — হাসপাতাল ড্যাশবোর্ড ও অ্যানালিটিক্স',
+  tv: 'DocBD — লাইভ ওপিডি ওয়েটিং টিভি ডিসপ্লে',
+  dual: 'DocBD — ডুয়াল ভিউ (রোগী + সিরিয়াল খাতা)'
+};
+
+export function switchView(viewName, pushHash = true) {
+  const norm = normalizeRole(viewName);
+  const workspace = document.getElementById('app-workspace');
+  const patientView = document.getElementById('patient-view');
+  const compView = document.getElementById('compounder-view');
+  const docView = document.getElementById('doctor-view');
+  const hospView = document.getElementById('hospital-view');
+  const tvView = document.getElementById('tv-view');
+
+  // Remove active from all tabs & view wrappers
   document.querySelectorAll('.switch-btn').forEach(btn => btn.classList.remove('active'));
   document.querySelectorAll('.device-frame-wrapper').forEach(v => v.classList.remove('view-active'));
+  if (workspace) workspace.classList.remove('dual-mode');
 
-  const btn = document.getElementById(`tab-${viewName}`);
-  const view = document.getElementById(`${viewName}-view`);
+  // Activate tab
+  const btn = document.getElementById(`tab-${norm}`);
   if (btn) btn.classList.add('active');
-  if (view) view.classList.add('view-active');
 
-  if (viewName === 'tv') {
-    const tvFrame = document.querySelector('.tv-screen');
-    if (tvFrame && !document.fullscreenElement) {
-      // Prompt fullscreen
-    }
+  // Activate view
+  if (norm === 'dual') {
+    if (workspace) workspace.classList.add('dual-mode');
+    if (patientView) patientView.classList.add('view-active');
+    if (compView) compView.classList.add('view-active');
+  } else if (norm === 'patient' && patientView) {
+    patientView.classList.add('view-active');
+  } else if (norm === 'compounder' && compView) {
+    compView.classList.add('view-active');
+  } else if (norm === 'doctor' && docView) {
+    docView.classList.add('view-active');
+  } else if (norm === 'hospital' && hospView) {
+    hospView.classList.add('view-active');
+    if (currentAnalytics) renderHospitalDashboard(currentAnalytics, currentModeInfo.isDemo);
+  } else if (norm === 'tv' && tvView) {
+    tvView.classList.add('view-active');
   }
+
+  // Update Document Title
+  if (ROLE_TITLES[norm]) {
+    document.title = ROLE_TITLES[norm];
+  }
+
+  // Persist & Update URL
+  localStorage.setItem('docbd_active_role', norm);
+  if (pushHash && window.location.hash !== `#${norm}`) {
+    try {
+      history.replaceState(null, '', `#${norm}`);
+    } catch (e) {}
+  }
+
   syncAllViews();
+}
+
+function normalizeRole(role) {
+  if (!role) return 'patient';
+  const r = role.toLowerCase().replace(/^[/#]+/, '');
+  if (r === 'serial' || r === 'reception') return 'compounder';
+  if (r === 'admin') return 'hospital';
+  if (['patient', 'compounder', 'doctor', 'hospital', 'tv', 'dual'].includes(r)) return r;
+  return 'patient';
+}
+
+export function initRoleRouting() {
+  const hash = window.location.hash;
+  const path = window.location.pathname;
+
+  let targetRole = 'patient';
+  if (hash) {
+    targetRole = normalizeRole(hash);
+  } else if (path && path !== '/') {
+    targetRole = normalizeRole(path);
+  } else {
+    const saved = localStorage.getItem('docbd_active_role');
+    if (saved) targetRole = normalizeRole(saved);
+  }
+
+  switchView(targetRole, true);
+
+  window.addEventListener('hashchange', () => {
+    const currentHash = window.location.hash;
+    if (currentHash) {
+      switchView(normalizeRole(currentHash), false);
+    }
+  });
 }
 
 export function switchChamber(chamberId) {
@@ -408,55 +491,169 @@ export function toggleEasyMode() {
   showToast(easyMode ? 'সহজ মোড সক্রিয় করা হয়েছে' : 'স্ট্যান্ডার্ড মোড সক্রিয়');
 }
 
-// Global Export to Window
-window.DocBD = {
-  // Mode
-  toggleSystemMode,
-  getActiveMode: () => currentModeInfo,
-  getActiveChamberId: () => activeChamberId,
-  reloadDoctorsAndDirectory,
-  syncAllViews,
+// Patient Self Check-in
+export async function confirmPatientCheckin() {
+  if (!myBookedSerial) {
+    showToast('কোনো সক্রিয় সিরিয়াল বুকিং পাওয়া যায়নি', false);
+    return;
+  }
+  try {
+    await fetch('/api/queue/checkin-toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chamberId: activeChamberId, serialNumber: myBookedSerial })
+    });
+    playBeepSound();
+    showToast(`🎉 ব্রাভো! আপনার সিরিয়াল #${myBookedSerial} উপস্থিতি নিশ্চিত হয়েছে! রিসেপশন ও ডাক্তারকে জানানো হয়েছে 🎈`, true);
+    await reloadActiveChamber();
+  } catch (e) {
+    showToast(`উপস্থিতি ট্র্যাকিং ত্রুটি: ${e.message}`, false);
+  }
+}
 
-  // Navigation
+// Doctor Delay Notice
+export async function broadcastDoctorDelay() {
+  const waitingPatients = masterQueue.filter(q => q.status === 'waiting').length;
+  try {
+    await fetch('/api/queue/delay-broadcast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chamberId: activeChamberId, delayMinutes: 30, reason: "জরুরি অপারেশন" })
+    });
+    playBeepSound();
+    showToast(`📢 চেম্বারের ${waitingPatients} জন রোগীকে ৩০ মিনিট বিলম্বের কারণ সহ SMS পাঠানো হয়েছে!`, true);
+  } catch (e) {
+    showToast('📢 বিলম্ব নোটিশ পাঠানো হয়েছে');
+  }
+}
+
+// Patient Bottom Navigation
+export function navPatient(tab) {
+  document.querySelectorAll('.patient-bottom-nav .nav-item').forEach(btn => btn.classList.remove('active'));
+  if (window.event && window.event.currentTarget) window.event.currentTarget.classList.add('active');
+
+  if (tab === 'bookings') {
+    showToast(myBookedSerial ? `📅 আপনার বুকিং: সিরিয়াল #${myBookedSerial} (পপুলার ডায়াগনস্টিক)` : 'এখনো কোনো সিরিয়াল বুকিং নেওয়া হয়নি');
+  } else if (tab === 'vault') {
+    openVaultModal();
+  } else if (tab === 'care') {
+    showToast('❤️ আপনার প্রাইমারি কেয়ার ডাক্তার: ডা. মো. রফিকুল ইসলাম সংরক্ষিত');
+  }
+}
+
+// Family Profiles
+export function openFamilyModal() {
+  const m = document.getElementById('family-modal');
+  if (m) m.classList.remove('hidden');
+}
+
+export function closeFamilyModal() {
+  const m = document.getElementById('family-modal');
+  if (m) m.classList.add('hidden');
+}
+
+export function switchFamilyMember(name) {
+  const p = document.getElementById('active-profile-name');
+  if (p) p.innerText = name;
+  closeFamilyModal();
+  showToast(`প্রোফাইল পরিবর্তন: ${name}-এর স্বাস্থ্য রেকর্ড সক্রিয়`);
+}
+
+// Modals Trigger Wrappers
+export function confirmBookingFromModal() {
+  const name = document.getElementById('bm-patient-name')?.value;
+  const phone = document.getElementById('bm-patient-phone')?.value;
+  submitSerialBooking(name, phone);
+}
+
+export function saveWalkinPatient() {
+  const name = document.getElementById('wm-patient-name')?.value;
+  const phone = document.getElementById('wm-patient-phone')?.value;
+  const gender = document.getElementById('wm-patient-gender')?.value;
+  const fee = document.getElementById('wm-patient-fee')?.value;
+  submitWalkinSerial(name, phone, gender, fee);
+}
+
+export function filterDept(dept) {
+  document.querySelectorAll('.dept-pill').forEach(p => p.classList.remove('active'));
+  if (window.event && window.event.target) window.event.target.classList.add('active');
+  showToast(`বিভাগ ফিল্টার: ${dept}`);
+}
+
+export function downloadPrescriptionPdf() {
+  window.print();
+}
+
+export function completeCurrentVisit() {
+  handleIssuePrescription();
+}
+
+export async function holdPatient() {
+  try {
+    await fetch('/api/queue/hold', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chamberId: activeChamberId })
+    });
+    await reloadActiveChamber();
+    showToast('রোগীকে সাময়িক হোল্ড তালিকায় রাখা হয়েছে');
+  } catch (e) {
+    showToast(`হোল্ড ত্রুটি: ${e.message}`, false);
+  }
+}
+
+export async function markNoShow() {
+  try {
+    await fetch('/api/queue/noshow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chamberId: activeChamberId })
+    });
+    await reloadActiveChamber();
+    showToast('অনুপস্থিত (No-show) হিসেবে চিহ্নিত করা হয়েছে');
+  } catch (e) {
+    showToast(`ত্রুটি: ${e.message}`, false);
+  }
+}
+
+export function issueDigitalPrescription() {
+  handleIssuePrescription();
+}
+
+// ===================================================================
+// GLOBAL WINDOW EXPORTS (DIRECT ONCLICK COMPATIBILITY)
+// ===================================================================
+const globalHandlers = {
+  // Navigation & Routing
   switchView,
   switchChamber,
   toggleLanguage,
   toggleEasyMode,
+  toggleSystemMode,
+  initRoleRouting,
 
-  // Search & Filter
+  // Patient Actions
   handleSearch: (q) => handleSearch(q, loadedDoctors),
   applyFilter: (t) => applyFilter(t, loadedDoctors),
   simulateVoiceSearch: () => simulateVoiceSearch(loadedDoctors),
-
-  // Core Actions
-  callNext: callNextPatient,
-  completeVisit: () => {
-    handleIssuePrescription();
-  },
-  markNoShow: () => {
-    fetch('/api/queue/noshow', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chamberId: activeChamberId }) })
-      .then(() => reloadActiveChamber());
-  },
-  holdPatient: () => {
-    fetch('/api/queue/hold', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chamberId: activeChamberId }) })
-      .then(() => reloadActiveChamber());
-  },
-  toggleCheckin: (serial) => {
-    fetch('/api/queue/checkin-toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chamberId: activeChamberId, serialNumber: serial }) })
-      .then(() => reloadActiveChamber());
-  },
-
-  // Modals & Data Entry
+  confirmPatientCheckin,
+  navPatient,
+  openFamilyModal,
+  closeFamilyModal,
+  switchFamilyMember,
   openBookingModal: (id) => openBookingModal(id, loadedDoctors, (doc) => { selectedDoctorForBooking = doc; }),
   closeBookingModal,
+  confirmBookingFromModal,
   submitSerialBooking: () => {
     const name = document.getElementById('bm-patient-name')?.value;
     const phone = document.getElementById('bm-patient-phone')?.value;
     submitSerialBooking(name, phone);
   },
 
+  // Compounder / Serial Khata
   openWalkinModal,
   closeWalkinModal,
+  saveWalkinPatient,
   submitWalkinSerial: () => {
     const name = document.getElementById('wm-patient-name')?.value;
     const phone = document.getElementById('wm-patient-phone')?.value;
@@ -464,30 +661,34 @@ window.DocBD = {
     const fee = document.getElementById('wm-patient-fee')?.value;
     submitWalkinSerial(name, phone, gender, fee);
   },
+  callNextPatient,
+  broadcastDoctorDelay,
+  holdPatient,
+  markNoShow,
+  toggleCheckin: (serial) => {
+    fetch('/api/queue/checkin-toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chamberId: activeChamberId, serialNumber: serial })
+    }).then(() => reloadActiveChamber());
+  },
 
-  // Verified Payments
+  // Payment Verification
+  openPaymentVerifyModal,
   openPaymentModal: openPaymentVerifyModal,
   closePaymentModal: closePaymentVerifyModal,
   confirmPayment: confirmVerifiedPayment,
 
-  // Doctor Onboarding
-  openDoctorRegisterModal,
-  closeDoctorRegisterModal,
-  submitDoctorRegister,
-
-  // Clinical Vitals & Rx
+  // Doctor Portal
+  completeCurrentVisit,
+  completeVisit: completeCurrentVisit,
+  callNext: callNextPatient,
   saveVitals: saveActiveVitals,
   addMedicineToPrescription,
   removeMed,
-  issueDigitalPrescription: handleIssuePrescription,
+  issueDigitalPrescription,
 
-  // Health Vault
-  openVaultModal,
-  closeVaultModal,
-  searchPrescriptionVault,
-  markDoseTaken,
-
-  // Emergency & Telehealth
+  // Telehealth & Emergency
   openEmergencyModal,
   closeEmergencyModal,
   simulateEmergencyCall,
@@ -496,10 +697,32 @@ window.DocBD = {
   toggleMic,
   toggleCam,
 
-  // Widget & Broadcast
+  // Health Vault & Prescriptions
+  openVaultModal,
+  closeVaultModal,
+  searchPrescriptionVault,
+  markDoseTaken,
+  downloadPrescriptionPdf,
+
+  // Hospital & Doctor Onboarding
+  openDoctorRegisterModal,
+  closeDoctorRegisterModal,
+  submitDoctorRegister,
+  filterDept,
+  broadcastHospitalAnnouncement,
   openWidgetModal,
   closeWidgetModal,
   copyWidgetCode,
-  broadcastHospitalAnnouncement,
   showToast
 };
+
+// Bind directly to global window for HTML onclick attributes
+Object.assign(window, globalHandlers);
+
+// Maintain legacy window.DocBD namespace
+window.DocBD = Object.assign(window.DocBD || {}, globalHandlers, {
+  getActiveMode: () => currentModeInfo,
+  getActiveChamberId: () => activeChamberId,
+  reloadDoctorsAndDirectory,
+  syncAllViews
+});

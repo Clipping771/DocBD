@@ -41,6 +41,14 @@ async function startServer() {
   await fastify.register(prescriptionRoutes);
   await fastify.register(smsRoutes);
 
+  // 3. Direct Role-Specific SPA Routes
+  const roleRoutes = ['/patient', '/doctor', '/serial', '/compounder', '/reception', '/hospital', '/admin', '/tv', '/dual', '/roles'];
+  roleRoutes.forEach(r => {
+    fastify.get(r, (req, reply) => {
+      reply.sendFile('index.html');
+    });
+  });
+
   // 3. Listen
   try {
     await fastify.listen({ port: config.port, host: config.host });

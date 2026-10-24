@@ -301,44 +301,24 @@ body {
    VIEW 1: PATIENT MOBILE APP FRAME
    =================================================================== */
 .phone-frame {
-  max-width: 440px;
+  max-width: 580px;
+  width: 100%;
   margin: 0 auto;
   background: #ffffff;
-  border-radius: 36px;
-  border: 8px solid #1e293b;
-  box-shadow: var(--shadow-lg), 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
   overflow: hidden;
   position: relative;
 }
 
 .phone-notch {
-  height: 24px;
-  background: #1e293b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.phone-notch .speaker {
-  width: 48px;
-  height: 4px;
-  background: #334155;
-  border-radius: 2px;
-}
-
-.phone-notch .camera {
-  width: 8px;
-  height: 8px;
-  background: #0f172a;
-  border-radius: 50%;
-  border: 1.5px solid #334155;
+  display: none;
 }
 
 .phone-screen {
   background: var(--bg-app);
-  height: 740px;
-  overflow-y: auto;
+  min-height: calc(100vh - 140px);
   display: flex;
   flex-direction: column;
 }
@@ -2445,4 +2425,63 @@ body {
   background: var(--primary);
   color: #ffffff;
   border-color: var(--primary);
+}
+
+/* ===================================================================
+   RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS
+   =================================================================== */
+@media (max-width: 992px) {
+  .top-nav {
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .view-switcher {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .view-switcher::-webkit-scrollbar {
+    display: none;
+  }
+  .app-workspace {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    padding: 8px 12px;
+  }
+  .brand-logo {
+    font-size: 1.15rem;
+  }
+  .nav-right {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .btn-emergency-top {
+    padding: 4px 8px;
+    font-size: 0.72rem;
+  }
+  .btn-lang-toggle, .btn-easy-toggle, .btn-mode-toggle {
+    padding: 4px 8px;
+    font-size: 0.72rem;
+  }
+  .phone-frame {
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .phone-screen {
+    min-height: 100vh;
+  }
+  .compounder-desk-frame, .doctor-portal-frame, .hospital-dashboard-frame {
+    padding: 14px;
+  }
 }
