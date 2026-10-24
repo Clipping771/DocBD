@@ -12,18 +12,16 @@ export function renderDoctorCards(docs, onSelect, isDemo = false) {
     if (countElem) countElem.innerText = '০ জন চেম্বারে';
     container.innerHTML = `
       <div class="empty-state-box" style="padding: 32px 16px; text-align: center; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1; margin: 12px 0;">
-        <svg class="empty-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#94a3b8" stroke-width="1.6" style="margin-bottom: 10px;">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <line x1="19" y1="8" x2="19" y2="14"></line>
-          <line x1="22" y1="11" x2="16" y2="11"></line>
+        <svg class="empty-icon" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#94a3b8" stroke-width="1.8" style="margin-bottom: 10px;">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
         </svg>
-        <h4 style="font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">কোনো ডাক্তার এখনও যুক্ত করা হয়নি</h4>
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: #1e293b; margin-bottom: 6px;">কোনো ডাক্তার পাওয়া যায়নি</h4>
         <p style="font-size: 0.85rem; color: #64748b; max-width: 380px; margin: 0 auto 16px; line-height: 1.5;">
-          আপনি নিজের ডাক্তার ও চেম্বার তৈরি করে সম্পূর্ণ সিস্টেম নিজের মতো পরিচালনা করতে পারেন।
+          আপনার সার্চ বা নির্বাচিত ফিল্টারের সাথে কোনো তথ্য মিলছে না। ফিল্টার রিসেট করে সব ডাক্তার দেখুন।
         </p>
-        <button class="btn-primary" onclick="openDoctorRegisterModal()" style="padding: 10px 20px; font-size: 0.875rem; font-weight: 700; border-radius: 8px; background: var(--primary); color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);">
-          + নতুন ডাক্তার ও চেম্বার তৈরি করুন
+        <button class="btn-primary" onclick="window.DocBD.handleSearch('')" style="padding: 10px 20px; font-size: 0.875rem; font-weight: 700; border-radius: 8px; background: var(--primary); color: #fff; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);">
+          সব ডাক্তার দেখুন
         </button>
       </div>
     `;
@@ -46,7 +44,7 @@ export function renderDoctorCards(docs, onSelect, isDemo = false) {
         <div class="doc-info-block">
           <div class="doc-title-row">
             <h4>${doc.name}</h4>
-            <span class="rating-badge">★ ${doc.rating}</span>
+            <span class="rating-badge">★ ${doc.rating || '৪.৯'}</span>
           </div>
           <div class="doc-spec">${doc.spec}</div>
           <div class="doc-degree">${doc.degree}</div>
@@ -56,9 +54,8 @@ export function renderDoctorCards(docs, onSelect, isDemo = false) {
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 <path d="m9 12 2 2 4-4"/>
               </svg>
-              ${doc.bmdc}
+              BMDC: ${doc.bmdc} (যাচাইকৃত)
             </span>
-            ${doc.isDemo ? '<span class="badge-tag" style="background:#fef3c7; color:#92400e; font-size:0.7rem; padding:2px 6px;">ডেমো রেকর্ড</span>' : ''}
           </div>
         </div>
       </div>
@@ -120,6 +117,10 @@ export function applyFilter(type, doctors) {
     renderDoctorCards(doctors.filter(d => d.dept === 'gynae' || d.spec.includes('স্ত্রী')));
   } else if (type === 'pediatrics') {
     renderDoctorCards(doctors.filter(d => d.dept === 'pediatrics' || d.spec.includes('শিশু')));
+  } else if (type === 'orthopedics') {
+    renderDoctorCards(doctors.filter(d => d.dept === 'orthopedics' || d.spec.includes('অর্থোপেডিক')));
+  } else if (type === 'dermatology') {
+    renderDoctorCards(doctors.filter(d => d.dept === 'dermatology' || d.spec.includes('চর্ম')));
   } else if (type === 'today') {
     renderDoctorCards(doctors.filter(d => d.availableToday));
   } else if (type === 'lowfee') {

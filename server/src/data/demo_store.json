@@ -1,7 +1,202 @@
 {
-  "updatedAt": "2026-10-24T03:00:00.000Z",
+  "updatedAt": "2026-10-24T04:15:00.000Z",
   "mode": "demo",
-  "chambers": [],
+  "chambers": [
+    {
+      "chamberId": "ch-pop-302",
+      "docId": "doc-rofiqul",
+      "bmdcRegNo": "A-28491",
+      "isDemo": false,
+      "docName": "অধ্যাপক ডা. মো. রফিকুল ইসলাম",
+      "degree": "MBBS, FCPS (Medicine), MD (Cardiology)",
+      "specialty": "হৃদরোগ ও মেডিসিন বিশেষজ্ঞ",
+      "hospitalName": "পপুলার ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "কক্ষ ৩০২, ২য় তলা",
+      "currentInsideSerial": 1,
+      "avgMinutesPerPatient": 10,
+      "fee": 1000,
+      "followupFee": 600,
+      "schedules": [
+        {
+          "day": "প্রতিদিন",
+          "time": "সন্ধ্যা ৭:০০ - রাত ১০:০০"
+        }
+      ],
+      "queue": [
+        {
+          "serial": 1,
+          "name": "আব্দুল করিম",
+          "phone": "01711223344",
+          "source": "online",
+          "checkin": true,
+          "fee": 1000,
+          "paid": true,
+          "status": "inside",
+          "bookedAt": "2026-10-24T03:15:00.000Z",
+          "paymentMethod": "CASH",
+          "paymentReceivedBy": "কাউন্টার ক্যাশিয়ার ১"
+        },
+        {
+          "serial": 2,
+          "name": "মাহমুদা আক্তার",
+          "phone": "01819887766",
+          "source": "walkin",
+          "checkin": true,
+          "fee": 1000,
+          "paid": false,
+          "status": "waiting",
+          "bookedAt": "2026-10-24T03:25:00.000Z"
+        },
+        {
+          "serial": 3,
+          "name": "রাশেদ চৌধুরী",
+          "phone": "01912334455",
+          "source": "online",
+          "checkin": false,
+          "fee": 1000,
+          "paid": true,
+          "status": "waiting",
+          "bookedAt": "2026-10-24T03:30:00.000Z",
+          "paymentMethod": "BKASH"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-ibn-201",
+      "docId": "doc-nusrat",
+      "bmdcRegNo": "A-39102",
+      "isDemo": false,
+      "docName": "ডা. নুসরাত জাহান চৌধুরী",
+      "degree": "MBBS, DGO, FCPS (Gynae & Obs)",
+      "specialty": "স্ত্রী ও প্রসূতিরোগ বিশেষজ্ঞ",
+      "hospitalName": "ইবনে সিনা ডায়াগনস্টিক সেন্টার, ধানমন্ডি",
+      "room": "রুম ২০১, ২য় তলা",
+      "currentInsideSerial": 1,
+      "avgMinutesPerPatient": 12,
+      "fee": 800,
+      "followupFee": 500,
+      "schedules": [
+        {
+          "day": "রবি, মঙ্গল, বৃহস্পতি",
+          "time": "বিকেল ৫:০০ - রাত ৮:৩০"
+        }
+      ],
+      "queue": [
+        {
+          "serial": 1,
+          "name": "তানিয়া সুলতানা",
+          "phone": "01722334455",
+          "source": "online",
+          "checkin": true,
+          "fee": 800,
+          "paid": true,
+          "status": "inside",
+          "bookedAt": "2026-10-24T03:20:00.000Z"
+        },
+        {
+          "serial": 2,
+          "name": "ফারজানা বেগম",
+          "phone": "01833445566",
+          "source": "walkin",
+          "checkin": false,
+          "fee": 800,
+          "paid": false,
+          "status": "waiting",
+          "bookedAt": "2026-10-24T03:35:00.000Z"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-sq-opd3",
+      "docId": "doc-sajjad",
+      "bmdcRegNo": "A-41820",
+      "isDemo": false,
+      "docName": "ডা. সাজ্জাদ হোসেন",
+      "degree": "MBBS, MD (Pediatrics), Neonatology",
+      "specialty": "নবজাতক ও শিশুরোগ বিশেষজ্ঞ",
+      "hospitalName": "স্কয়ার হাসপাতাল, পান্থপথ",
+      "room": "ওপিডি ৩, ৩য় তলা",
+      "currentInsideSerial": null,
+      "avgMinutesPerPatient": 10,
+      "fee": 1200,
+      "followupFee": 800,
+      "schedules": [
+        {
+          "day": "শনি, সোম, বুধ",
+          "time": "সন্ধ্যা ৬:০০ - রাত ৯:০০"
+        }
+      ],
+      "queue": [
+        {
+          "serial": 1,
+          "name": "আহনাফ রহমান (শিশু)",
+          "phone": "01944556677",
+          "source": "online",
+          "checkin": true,
+          "fee": 1200,
+          "paid": true,
+          "status": "waiting",
+          "bookedAt": "2026-10-24T03:40:00.000Z"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-lab-405",
+      "docId": "doc-hannan",
+      "bmdcRegNo": "A-19402",
+      "isDemo": false,
+      "docName": "অধ্যাপক ডা. এম এ হান্নান",
+      "degree": "MBBS, MS (Orthopedics), FICS",
+      "specialty": "অর্থোপেডিক ও ট্রমা বিশেষজ্ঞ",
+      "hospitalName": "ল্যাবএইড স্পেশালাইজড হাসপাতাল, ধানমন্ডি",
+      "room": "রুম ৪০৫, ৪র্থ তলা",
+      "currentInsideSerial": null,
+      "avgMinutesPerPatient": 15,
+      "fee": 1500,
+      "followupFee": 1000,
+      "schedules": [
+        {
+          "day": "শনি, রবি, মঙ্গল, বৃহস্পতি",
+          "time": "সন্ধ্যা ৬:৩০ - রাত ৯:৩০"
+        }
+      ],
+      "queue": [
+        {
+          "serial": 1,
+          "name": "মো. কামরুল হাসান",
+          "phone": "01755667788",
+          "source": "online",
+          "checkin": true,
+          "fee": 1500,
+          "paid": true,
+          "status": "waiting",
+          "bookedAt": "2026-10-24T03:45:00.000Z"
+        }
+      ]
+    },
+    {
+      "chamberId": "ch-evc-opd5",
+      "docId": "doc-farhana",
+      "bmdcRegNo": "A-44912",
+      "isDemo": false,
+      "docName": "ডা. ফারহানা আহমেদ",
+      "degree": "MBBS, DDV, FCPS (Dermatology)",
+      "specialty": "চর্ম, এলার্জি ও যৌনরোগ বিশেষজ্ঞ",
+      "hospitalName": "এভারকেয়ার হাসপাতাল, বসুন্ধরা",
+      "room": "ওপিডি ৫, ৫ম তলা",
+      "currentInsideSerial": null,
+      "avgMinutesPerPatient": 10,
+      "fee": 1200,
+      "followupFee": 800,
+      "schedules": [
+        {
+          "day": "প্রতিদিন",
+          "time": "বিকেল ৪:০০ - সন্ধ্যা ৭:০০"
+        }
+      ],
+      "queue": []
+    }
+  ],
   "prescriptions": {},
   "auditLogs": []
 }

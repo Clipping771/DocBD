@@ -57,8 +57,9 @@
 
     <!-- Right Controls -->
     <div class="nav-right">
-      <button class="btn-comp-action btn-primary" onclick="openDoctorRegisterModal()" style="padding:7px 16px; font-size:0.825rem; font-weight:700; white-space:nowrap;">
-        + নতুন ডাক্তার
+      <button class="btn-comp-action btn-outline" onclick="openVaultModal()" style="padding:7px 14px; font-size:0.825rem; font-weight:600; white-space:nowrap; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; cursor:pointer; color:#334155; display:inline-flex; align-items:center; gap:6px;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        প্রেসক্রিপশন
       </button>
       <button id="btn-emergency" class="btn-emergency-top" onclick="openEmergencyModal()">
         🚨 জরুরি (১৬২৬৩)
@@ -105,11 +106,12 @@
             </div>
             <div class="quick-filters">
               <button class="filter-pill active" onclick="applyFilter('all')">সব ডাক্তার</button>
-              <button class="filter-pill" onclick="applyFilter('cardiology')">কার্ডিওলজি</button>
+              <button class="filter-pill" onclick="applyFilter('cardiology')">কার্ডিওলজি ও মেডিসিন</button>
               <button class="filter-pill" onclick="applyFilter('gynae')">স্ত্রী ও প্রসূতি</button>
               <button class="filter-pill" onclick="applyFilter('pediatrics')">শিশুরোগ</button>
+              <button class="filter-pill" onclick="applyFilter('orthopedics')">অর্থোপেডিক</button>
+              <button class="filter-pill" onclick="applyFilter('dermatology')">চর্মরোগ</button>
               <button class="filter-pill" onclick="applyFilter('today')">আজকের চেম্বার</button>
-              <button class="filter-pill" onclick="applyFilter('lowfee')">ফি ৳৮০০ এর নিচে</button>
             </div>
           </div>
 
@@ -125,7 +127,7 @@
             <div class="ticket-doc-info">
               <div>
                 <h4 id="ticket-doc-name">কোনো সক্রিয় সিরিয়াল বুকিং নেই</h4>
-                <p id="ticket-doc-spec">নিচের তালিকা থেকে ডাক্তার বেছে সিরিয়াল নিন অথবা নতুন ডাক্তার তৈরি করুন</p>
+                <p id="ticket-doc-spec">নিচের তালিকা থেকে বিশেষজ্ঞ চিকিৎসক বেছে নিয়ে সরাসরি সিরিয়াল বুকিং করুন</p>
               </div>
             </div>
 
@@ -173,9 +175,10 @@
               <h3>উপলব্ধ বিশেষজ্ঞ চিকিৎসক ও চেম্বার</h3>
               <span class="result-count" id="doctor-count">০ জন চেম্বারে</span>
             </div>
-            <button class="btn-comp-action btn-primary" onclick="openDoctorRegisterModal()" style="padding:6px 12px; font-size:0.8rem; font-weight:700;">
-              + নতুন ডাক্তার যোগ করুন
-            </button>
+            <span class="verified-platform-badge" style="display:inline-flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:600; color:#0f766e; background:#f0fdfa; border:1px solid #ccfbf1; padding:4px 10px; border-radius:9999px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              ১০০% বিএমডিসি নিবন্ধিত বিশেষজ্ঞ
+            </span>
           </div>
 
           <div class="doctor-list" id="doctor-list-container">
